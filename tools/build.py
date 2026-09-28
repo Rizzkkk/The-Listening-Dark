@@ -27,6 +27,25 @@ MARK = """<svg class="mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><
 # small mark for cover / empty states
 MOON_SM = """<svg viewBox="0 0 32 32" fill="none" aria-hidden="true" width="40" height="40"><circle cx="13" cy="14" r="8.5" stroke="#A78FE3" stroke-width="1.2" opacity=".9"/><circle cx="21.5" cy="20" r="5" fill="#D2A85E" opacity=".95"/><circle cx="25" cy="7.5" r="1.1" fill="#E6E3F2"/></svg>"""
 
+# ---- Hero starfield: fixed positions, sliced to the viewport (never animates) ----
+_PALE = [(64,120,1,.5),(212,48,.8,.4),(340,210,1.2,.35),(498,86,.8,.5),(610,300,1,.3),
+         (702,40,1.4,.6),(780,160,.8,.4),(900,96,1,.45),(1180,30,.8,.4),(1320,70,1.2,.5),
+         (1392,240,.8,.4),(1360,420,.8,.35),(1400,610,1.4,.5),(1260,760,1,.35),
+         (140,520,.8,.3),(40,700,1.2,.4),(280,400,.7,.3),(420,640,1,.25),
+         (560,820,.8,.3),(720,520,.7,.3),(860,760,1,.4),(1010,840,.8,.35)]
+_GOLD = [(836,232,1.6,.8),(1288,820,1.4,.7)]
+
+def _stars(pts):
+    return "".join('<circle cx="%s" cy="%s" r="%s" opacity="%s"/>' % pt for pt in pts)
+
+HERO_STARS = ('<svg class="hero-stars" aria-hidden="true" viewBox="0 0 1440 880" '
+              'preserveAspectRatio="xMidYMid slice">'
+              '<g fill="#E6E3F2">' + _stars(_PALE) + '</g>'
+              '<g fill="#D2A85E">' + _stars(_GOLD) + '</g></svg>')
+
+STAR_4 = ('<svg class="star" aria-hidden="true" width="16" height="16" viewBox="0 0 16 16">'
+          '<path d="M8 0 L9.2 6.8 L16 8 L9.2 9.2 L8 16 L6.8 9.2 L0 8 L6.8 6.8 Z" fill="currentColor"/></svg>')
+
 DIV_STAR = """<div class="divider-star" aria-hidden="true"><span>&#10022;&nbsp;&nbsp;&#10022;</span></div>"""
 
 def head(title, desc):
@@ -97,25 +116,30 @@ def cover_block(large=False):
     cls = "cover cover-img lg" if large else "cover cover-img"
     return f"""<div class="cover-stage reveal">
           <div class="{cls}" id="cover">
-            <img src="assets/cover.jpg" alt="The Listening Dark by KP Cap &mdash; front cover: a woman in a dark gown beneath twin moons, before a candlelit gothic castle, framed in silver filigree" width="900" height="1564" loading="lazy">
+            <img src="assets/cover.jpg" alt="The Listening Dark by KP Capitulo &mdash; front cover: twin moons, one eclipsing the other in a ring of gold light, rising through dark cloud" width="900" height="1333" loading="lazy">
           </div>
         </div>"""
 
 def waitlist_section():
+    """The one conversion on every page. Full-bleed, twin moons cropped by the
+    section's top edge, with a visible field label (not just aria-label)."""
     return """  <section class="section waitlist" id="waitlist">
+    <span class="wl-moon wl-moon-a" aria-hidden="true"></span>
+    <span class="wl-moon wl-moon-b" aria-hidden="true"></span>
     <div class="wrap">
-      <div class="card-wl reveal">
-        <div class="kicker center" style="margin-bottom:var(--s5)">The Invitation</div>
-        <h2>Be the first<br>into the dark.</h2>
-        <p class="lead">Join the waitlist for the cover reveal, early chapters, and word of when <em>The Listening Dark</em> arrives.</p>
-        <form class="wl-form" data-waitlist novalidate>
-          <div class="hp" aria-hidden="true"><label>Leave blank<input type="text" tabindex="-1" autocomplete="off"></label></div>
-          <div class="field"><input type="email" placeholder="Enter your email" aria-label="Email address" required></div>
+      <p class="kicker k-gold center reveal">The Invitation</p>
+      <h2 class="reveal">Be the first into <em>the dark.</em></h2>
+      <p class="lead reveal">Join the waitlist for the cover reveal, early chapters, and word of when <em>The Listening Dark</em> arrives.</p>
+      <form class="wl-form reveal" data-waitlist novalidate>
+        <div class="hp" aria-hidden="true"><label>Leave blank<input type="text" tabindex="-1" autocomplete="off"></label></div>
+        <label class="wl-label" for="wl-email">Email address</label>
+        <div class="field">
+          <input id="wl-email" type="email" autocomplete="email" placeholder="you@example.com" required>
           <button class="btn btn-primary" type="submit">Join the Waitlist</button>
-        </form>
-        <p class="form-msg" role="status" aria-live="polite"></p>
-        <p class="wl-note">No noise. One message when it matters. Unsubscribe anytime.</p>
-      </div>
+        </div>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+      <p class="wl-note">No noise. One message when it matters. Unsubscribe anytime.</p>
     </div>
   </section>
 """
@@ -142,7 +166,7 @@ def footer(wl_target):
           <p>The cover reveal and early chapters, straight to you.</p>
           <form data-waitlist novalidate>
             <div class="hp" aria-hidden="true"><label>Leave blank<input type="text" tabindex="-1" autocomplete="off"></label></div>
-            <div class="field"><input type="email" placeholder="you@email.com" aria-label="Email address" required><button class="btn btn-primary btn-mini" type="submit">Join</button></div>
+            <div class="field"><input id="ft-email" type="email" autocomplete="email" placeholder="you@email.com" aria-label="Email address" required><button class="btn btn-primary btn-mini" type="submit">Join</button></div>
             <p class="form-msg" role="status" aria-live="polite"></p>
           </form>
         </div>
@@ -199,78 +223,129 @@ EXCERPT_MORE = """<p>Neither of us had what you&rsquo;d call <em>real</em> magic
 # =====================================================================
 
 HOME = f"""  <header class="hero">
-    <div class="hero-moons" aria-hidden="true"></div>
-    <div class="hero-inner">
-      <div class="kicker center eyebrow" data-reveal>An Adult Fantasy Romance &middot; Book One &middot; KP&nbsp;Cap</div>
-      <h1 class="hero-title" data-split>The Listening Dark</h1>
-      <p class="hero-sub" data-reveal>It doesn&rsquo;t respond to will. It doesn&rsquo;t obey. <b>It listens.</b></p>
+    {HERO_STARS}
+    <div class="hero-moons" aria-hidden="true">
+      <img class="moon-art" src="assets/moons.webp" alt="" width="1100" height="1100" decoding="async" fetchpriority="high">
+    </div>
+    <div class="wrap hero-inner">
+      <p class="kicker k-gold eyebrow" data-reveal>An Adult Fantasy Romance &middot; Book One &middot; KP&nbsp;Cap</p>
+      <h1 class="hero-title" data-reveal>
+        <span class="ht-the">The</span>
+        <span class="ht-a">Listening</span>
+        <span class="ht-b">Dark</span>
+      </h1>
+      <p class="hero-sub" data-reveal>I don&rsquo;t aim it. I don&rsquo;t need to. <em>It listens.</em></p>
       <div class="hero-cta" data-reveal>
         <a class="btn btn-primary" href="#waitlist">Join the Waitlist</a>
-        <a class="btn btn-ghost" href="#excerpt">Read Chapter One</a>
+        <a class="btn btn-ghost" href="#excerpt">Read Chapter One <span class="arrow" aria-hidden="true">&rarr;</span></a>
       </div>
     </div>
-    <div class="scrollcue" aria-hidden="true"><span>Scroll</span><span class="bar"></span></div>
+    <div class="wrap hero-foot" data-reveal>
+      <span class="rule" aria-hidden="true"></span>
+      <span class="pub">Publication &middot; To Be Announced</span>
+    </div>
   </header>
 
-  <section class="section logline">
+  <section class="section-sm premise">
     <div class="wrap">
-      <div class="kicker center reveal">The Premise</div>
-      <p class="reveal">Some doors aren&rsquo;t locked. <span class="accent">They&rsquo;re simply not for everyone.</span></p>
+      <div class="reveal">{STAR_4}</div>
+      <p class="reveal">Some doors aren&rsquo;t locked. They&rsquo;re simply not for everyone.</p>
     </div>
   </section>
 
-  <section class="section" id="book">
+  <section class="section section-deep" id="book">
     <div class="wrap">
-      <div class="book-grid">
-        {cover_block(False)}
+      <div class="story-grid">
+        <div class="cover-staged reveal">
+          <span class="cs-ring" aria-hidden="true"></span>
+          <span class="cs-frame" aria-hidden="true"></span>
+          <div class="cover cover-img">
+            <img src="assets/cover.jpg" alt="The Listening Dark by KP Capitulo &mdash; front cover: twin moons, one eclipsing the other in a ring of gold light, rising through dark cloud" width="900" height="1333" loading="lazy">
+          </div>
+        </div>
         <div class="prose-head">
-          <div class="kicker reveal">The Story</div>
-          <h2 class="reveal">Dragons choose their riders. Something older chose her.</h2>
+          <p class="kicker k-gold reveal">The Story</p>
+          <h2 class="reveal">Dragons choose their riders. <em>Something older chose her.</em></h2>
+          <p class="kicker-note reveal">Chosen not by bloodline or rank, but by something older than either.</p>
           <div class="prose reveal">
             <p>When Camilla Ayala is dragged to Etereia &mdash; the realm where those born with extraordinary abilities are trained, classified, and controlled &mdash; she arrives with nothing but grief and a power no one can name. It doesn&rsquo;t respond to will. It doesn&rsquo;t obey. <em>It listens.</em></p>
-            <p>Then there&rsquo;s the dragon. Ancient beyond measure. Calling to her in the dark.</p>
+            <p class="prose-turn">Then there&rsquo;s the dragon. Ancient beyond measure. Calling to her in the dark.</p>
           </div>
-          <dl class="spec reveal">
+          <dl class="spec spec-ruled reveal">
             <div><dt>Genre</dt><dd>Adult Fantasy Romance</dd></div>
             <div><dt>Series</dt><dd>Book One</dd></div>
             <div><dt>Publication</dt><dd>To Be Announced</dd></div>
           </dl>
-          <a class="link-txt reveal" href="book.html">More about the book <span class="arrow">&rarr;</span></a>
+          <p class="advisory reveal">18+ &middot; Contains explicit content, violence, and strong language.</p>
+          <a class="link-txt reveal" href="book.html">More about the book <span class="arrow" aria-hidden="true">&rarr;</span></a>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section quote">
+  <section class="section-xs section-deep">
     <div class="wrap">
-      {DIV_STAR}
-      <blockquote class="reveal">&ldquo;Magic is just the world <em>paying attention</em> to you. Some people the world notices more than others.&rdquo;</blockquote>
-      <cite class="reveal">From Chapter One</cite>
+      <div class="soft-ask reveal">
+        <div class="sa-left">
+          <span class="sa-moons" aria-hidden="true"><i></i><i></i></span>
+          <p>The cover reveal and early chapters, straight to you.</p>
+        </div>
+        <a class="link-txt" href="#waitlist">Join the Waitlist <span class="arrow" aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote-full">
+    <span class="qf-ring qf-ring-a" aria-hidden="true"></span>
+    <span class="qf-ring qf-ring-b" aria-hidden="true"></span>
+    <div class="wrap">
+      <span class="qf-mark" aria-hidden="true">&ldquo;</span>
+      <blockquote class="reveal">My mother used to say magic is just the world paying attention to you. That some people the world notices more than others.</blockquote>
+      <p class="qf-cite reveal">Dezi &middot; Chapter One</p>
     </div>
   </section>
 
   <section class="section" id="excerpt">
     <div class="wrap">
       <div class="reading">
-        <div class="kicker center reveal">Chapter One</div>
+        <p class="kicker k-gold reveal">An Excerpt</p>
+        <h2 class="excerpt-h reveal">Chapter One</h2>
         <div class="gate locked" id="home-gate">
           <div class="reading-body reveal">
             {EXCERPT_OPEN}
           </div>
         </div>
         <div class="gate-cta reveal">
-          <div class="kicker center">Keep reading</div>
-          <a class="btn btn-primary" href="book.html#excerpt">Continue Chapter One</a>
+          {DIV_STAR}
+          <p class="gate-lead">Keep reading</p>
+          <div class="gate-btns">
+            <a class="btn btn-primary" href="book.html#excerpt">Read Chapter One</a>
+            <a class="btn btn-ghost" href="#waitlist">Join the Waitlist</a>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section-sm">
-    <div class="wrap" style="text-align:center">
-      <div class="kicker center reveal" style="justify-content:center;margin-bottom:var(--s5)">The Author</div>
-      <p class="reveal" style="font-family:var(--f-display);font-variation-settings:'opsz' 96,'wght' 380;font-size:clamp(1.6rem,3.6vw,2.6rem);letter-spacing:-.01em;margin:0 auto var(--s5);max-width:26ch;color:var(--bone-bright)">KP Cap has been building this world since 2017 &mdash; and finished it during her baby&rsquo;s nap times.</p>
-      <a class="link-txt reveal" href="author.html" style="justify-content:center">Meet the author <span class="arrow">&rarr;</span></a>
+  <section class="section home-author" id="author">
+    <div class="wrap">
+      <div class="author-grid-home">
+        <figure class="portrait-arch reveal">
+          <span class="pa-frame" aria-hidden="true"></span>
+          <img src="assets/author.jpg" alt="KP Cap, seated in a leather armchair in a reading nook lined with books" width="900" height="1350" loading="lazy">
+        </figure>
+        <div class="ha-body">
+          <p class="kicker k-gold reveal">The Author</p>
+          <h2 class="reveal">KP Cap</h2>
+          <p class="ha-teaser reveal">A military spouse and a collector of random trinkets, KP Cap started this novel in 2017, rewrote it more times than she can count, and finished it during her baby&rsquo;s nap times. She has been dreaming up fantasy worlds since the sixth grade. <em>The Listening Dark</em> is her debut.</p>
+          <p class="ha-comp reveal">ACOTAR energy, Throne of Glass pacing.</p>
+          <div class="ha-links reveal">
+            <a class="link-txt" href="author.html">Meet the author <span class="arrow" aria-hidden="true">&rarr;</span></a>
+            <a href="https://instagram.com/kpcapitulo" rel="noopener">Instagram @kpcapitulo</a>
+            <a href="https://tiktok.com/@kp.capitulo" rel="noopener">TikTok @kp.capitulo</a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -365,7 +440,7 @@ BOOK = f"""  <header class="page-hero">
 AUTHOR = f"""  <header class="page-hero">
     <div class="wrap">
       <div class="kicker center reveal">The Author</div>
-      <h1 class="reveal">KP Cap</h1>
+      <h1 class="reveal">KP Capitulo</h1>
       <p class="lede reveal">Dreaming up fantasy worlds since the sixth grade. Writing this one since 2017.</p>
     </div>
   </header>
@@ -374,18 +449,12 @@ AUTHOR = f"""  <header class="page-hero">
     <div class="wrap">
       <div class="author-grid">
         <figure class="portrait reveal" style="margin:0">
-          <!-- AUTHOR PHOTO PLACEHOLDER
-               When the photo is ready, drop it at assets/author.jpg and
-               uncomment the line below (then delete the placeholder marks):
-          <img src="assets/author.jpg" alt="KP Cap, author of The Listening Dark">
-          -->
-          <span class="pmark">{MOON_SM}</span>
-          <figcaption class="p-note">Author photo &mdash; coming soon</figcaption>
+          <img src="assets/author.jpg" alt="KP Capitulo, author of The Listening Dark, seated in a reading nook lined with books" width="900" height="1350" loading="lazy">
         </figure>
         <div class="author-bio">
           <div class="kicker reveal">Biography</div>
           <div class="prose reveal" style="margin-top:var(--s5)">
-            <p><strong>KP Cap</strong> is a military spouse, a collector of random trinkets, and the kind of person who started writing a fantasy novel in 2017, rewrote it more times than she can count, and finally finished it during her baby&rsquo;s nap times &mdash; which, if you know newborns, makes this book an act of sheer determination.</p>
+            <p><strong>KP Capitulo</strong> is a military spouse, a collector of random trinkets, and the kind of person who started writing a fantasy novel in 2017, rewrote it more times than she can count, and finally finished it during her baby&rsquo;s nap times &mdash; which, if you know newborns, makes this book an act of sheer determination.</p>
             <p>Born in the Netherlands and raised in the Philippines and now living wherever her husband goes, KP has been dreaming up fantasy worlds since the sixth grade, when a YA novel convinced her that magic was real and she should probably write some of her own.</p>
             <p>When she isn&rsquo;t building fictional realms, she&rsquo;s painting, drawing, chasing her three kids away from her laptop, or being emotionally supported by her cats and dog &mdash; who have heard every single draft of this book and have no notes.</p>
             <p><em>The Listening Dark</em> is her debut novel.</p>
@@ -446,7 +515,7 @@ PRESS = f"""  <header class="page-hero">
     <div class="wrap">
       <div class="kicker reveal" style="margin-bottom:var(--s7)">Downloads</div>
       <div class="grid grid-3 stagger">
-        {asset("Book cover (web res)", "JPG &middot; 900&times;1564 &middot; available now", ICON_IMG, "assets/cover.jpg", True)}
+        {asset("Book cover (web res)", "JPG &middot; 900&times;1333 &middot; available now", ICON_IMG, "assets/cover.jpg", True)}
         {asset("Author photo", "JPG &middot; coming soon", ICON_IMG)}
         {asset("Title logo &amp; twin-moon mark", "SVG &middot; PNG &middot; coming soon", ICON_DOC)}
         {asset("One-sheet", "PDF &middot; coming soon", ICON_DOC)}

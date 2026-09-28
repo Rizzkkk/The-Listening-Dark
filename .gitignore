@@ -1,0 +1,10 @@
+# Source artwork and design handoffs. The web assets in assets/ are derived
+# from these (see README), and the originals are far too large to ship:
+# The.png alone is 28 MB against a 216 KB cover.
+assets/The.png
+*.psd
+*.zip
+
+# Local working notes, not part of the site
+DESIGN-PROMPT.md
+_probe.html

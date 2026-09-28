@@ -9,13 +9,29 @@ Plain **HTML / CSS / JS** — no build tools, no framework, no dependencies to i
 > selling — real Chapter One excerpt, real quotes, real bio. Calm by design:
 > no flicker, no grain, comfortable contrast throughout.
 
-## Drop-in assets (when ready)
+## Assets in place
 
-| Asset | Where | What happens |
+| Asset | File | Used by |
 |---|---|---|
-| Real cover art | `assets/cover.jpg` | Swap the typographic `.cover` mock in `tools/build.py` (`cover_block`) for `<img src="assets/cover.jpg" …>` |
-| Author photo | `assets/author.jpg` | Open `author.html` (or `tools/build.py`), uncomment the ready-made `<img>` in the portrait `<figure>` |
-| OG share image | `assets/og.png` (1200×630) | Add `og:image` / `twitter:image` meta in `tools/build.py` `head()` — **do this before launch**, shared links currently have no preview image |
+| Cover art | `assets/cover.jpg` (900×1333) | Home story section, `book.html` |
+| Author photo | `assets/author.jpg` (900×1350) | Home author section (arch crop), `author.html` portrait |
+| OG share image | `assets/og.png` (1200×630) | `og:image` / `twitter:image` on every page |
+| Twin-moon artwork | `assets/moons.webp` (1100×1100, 149 KB) | Home hero — **generated**, see below |
+
+The cover is the front panel cropped out of the full hardcover spread
+(`Downloads/The.png`, 5895×4240): the spine's right edge sits at x=3033, so the
+panel is `crop((3033, 0, 5895, 4240))` scaled to 900px wide. The OG card is built
+from that same JPG. Both are referenced with explicit `width`/`height`, so update
+those attributes in `tools/build.py` whenever the artwork's proportions change —
+and check the alt text still describes what is actually on the cover.
+
+### The hero moons are generated, not stock
+
+`python tools/make_moons.py` renders `assets/moons.webp` from scratch: the crater
+field, the warm limb light and the smoke are all synthesised from seeded noise,
+so the image is original artwork with no licensing question attached. Change
+`SEED` at the top for a different moon; the composition stays put. Needs numpy,
+scipy and Pillow — none of which the site itself depends on.
 
 ---
 
@@ -47,7 +63,7 @@ Drag-and-drop the whole folder to any static host — no configuration needed:
 |---|---|
 | `index.html` | Home — the full cinematic scroll |
 | `book.html` | About the Book (synopsis, excerpt, themes, details) |
-| `author.html` | About the Author (layout ready — bio blank) |
+| `author.html` | About the Author (bio, portrait, dedication) |
 | `press.html` | Press Kit |
 | `faq.html` | FAQ |
 | `contact.html` | Contact |
@@ -59,7 +75,7 @@ Drag-and-drop the whole folder to any static host — no configuration needed:
 ```
 index.html …            all pages (plain HTML, edit directly)
 css/style.css           the entire design system + components
-js/main.js              all behaviour (nav, menu, grain, reveals, forms)
+js/main.js              all behaviour (nav, menu, reveals, excerpt gate, forms)
 assets/fonts/           Fraunces · Newsreader · Inter · Space Mono (local .woff2)
 tools/build.py          optional generator — regenerates the HTML from shared
                         nav/footer fragments so they never drift. NOT required
@@ -79,32 +95,36 @@ Real content is now live: Chapter One excerpt, quotes, synopsis, author bio,
 dedication, socials (@kpcapitulo / @kp.capitulo), genre & content notes.
 Still to do:
 
-- **Cover art** and **author photo** (see drop-in table above)
-- **OG share image** — without it, links shared to Instagram/TikTok/iMessage show no preview
 - **Book details** as they firm up (formats, page count, ISBN, publication date)
 - **Press kit downloads** (currently "coming soon" cards)
 - **Legal copy** (drafts in place — review with counsel)
 
-## Wire up the forms (important)
+## The forms
 
-The waitlist and contact forms are **front-end demos** — they validate and show a
-success message but **don't send anything yet**. To make them live, connect them
-to an email service. Easiest options for an author:
+Both the waitlist and the contact form POST via **FormSubmit AJAX** to the address
+in `ENDPOINT` at the top of the form section in `js/main.js`. They validate inline,
+show sending/error states, and carry a honeypot field.
 
-- **Kit (ConvertKit)** or **Beehiiv** — newsletter-native, free tier, own your list.
-- **Formspree** / **Netlify Forms** — for the contact form, near-zero setup.
-
-In `js/main.js`, the form handlers are marked
-`/* demo — wire to an ESP for production */` — replace the success block with a
-`fetch()` POST to your provider (or add the provider's `action`/attributes to the
-`<form>` tags).
+**One action is still required:** FormSubmit emails a one-time activation link to
+that inbox on the first real submission. Until someone clicks it, nothing is
+delivered. Swap to Kit or Beehiiv later if a managed list with unsubscribe is wanted.
 
 ---
 
 ## Design notes
 
 - **Deliberately dark-only** — a committed nocturnal world; the theme toggle is intentionally ignored.
+- **Every quote on the site is verbatim from the manuscript**, and cited to the
+  character who says it. Marketing copy (the synopsis, the spec strips) is
+  clearly framed as description, never set in quotation marks as if it were the
+  book's prose. Check any new pull-quote against `The_Listening_Dark_BETA.docx`
+  before it ships — two lines that had been on the home page were blurb copy
+  that appears nowhere in the book.
+- **The home page follows the Sept 2026 redesign comps** (`listening-dark-home-handoff`):
+  stacked hero title under twin moons, staged cover, soft ask, full-bleed pull-quote,
+  arch-cropped author portrait. Buttons and text links are sentence case site-wide;
+  uppercase tracking is reserved for kickers and meta.
 - **Accessible** — keyboard-navigable, visible focus, honours `prefers-reduced-motion`
-  (grain, parallax, cursor, and reveals all switch off), semantic structure.
+  (reveals switch off), semantic structure.
 - **Fast** — fonts are local & subset; no external requests; works offline.
 - Full design rationale lives in the approved design plan.

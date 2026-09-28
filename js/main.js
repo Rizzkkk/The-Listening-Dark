@@ -96,35 +96,24 @@
       : null;
   }
 
-  /* ---- Hero title: split into letters (one-time entrance) ---- */
-  var title = document.querySelector('[data-split]');
-  if (title) {
-    var txt = title.textContent;
-    title.textContent = '';
-    var frag = document.createDocumentFragment();
-    for (var i = 0; i < txt.length; i++) {
-      var c = txt[i];
-      if (c === ' ') { frag.appendChild(document.createTextNode(' ')); continue; }
-      var s = document.createElement('span');
-      s.className = 'ch';
-      s.textContent = c;
-      if (!reduce) {
-        s.style.opacity = '0';
-        s.style.transform = 'translateY(0.4em)';
-        s.style.transition = 'opacity .8s var(--ease), transform .8s var(--ease)';
-        s.style.transitionDelay = (0.25 + i * 0.045) + 's';
-      }
-      frag.appendChild(s);
-    }
-    title.appendChild(frag);
-    if (!reduce) {
+  /* ---- Hero moons: a few pixels of pointer drift ----
+     Fine pointers only, and never under reduced motion. Max travel is
+     deliberately tiny - this is depth, not a parallax ride. */
+  var moonArt = document.querySelector('.moon-art');
+  if (moonArt && fine && !reduce) {
+    var MAX = 14;
+    var queued = false, mx = 0, my = 0;
+    window.addEventListener('pointermove', function (e) {
+      mx = (e.clientX / window.innerWidth - 0.5) * 2;
+      my = (e.clientY / window.innerHeight - 0.5) * 2;
+      if (queued) return;
+      queued = true;
       requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          var chs = title.querySelectorAll('.ch');
-          for (var j = 0; j < chs.length; j++) { chs[j].style.opacity = '1'; chs[j].style.transform = 'none'; }
-        });
+        queued = false;
+        moonArt.style.transform =
+          'translate3d(' + (-mx * MAX).toFixed(2) + 'px,' + (-my * MAX * 0.6).toFixed(2) + 'px,0)';
       });
-    }
+    }, { passive: true });
   }
 
   /* ---- Sequential reveal on load (hero elements) ---- */

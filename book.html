@@ -60,7 +60,7 @@
       <div class="book-grid">
         <div class="cover-stage reveal">
           <div class="cover cover-img lg" id="cover">
-            <img src="assets/cover.jpg" alt="The Listening Dark by KP Cap &mdash; front cover: a woman in a dark gown beneath twin moons, before a candlelit gothic castle, framed in silver filigree" width="900" height="1564" loading="lazy">
+            <img src="assets/cover.jpg" alt="The Listening Dark by KP Capitulo &mdash; front cover: twin moons, one eclipsing the other in a ring of gold light, rising through dark cloud" width="900" height="1333" loading="lazy">
           </div>
         </div>
         <div class="prose-head">
@@ -151,19 +151,22 @@
   </section>
 
   <section class="section waitlist" id="waitlist">
+    <span class="wl-moon wl-moon-a" aria-hidden="true"></span>
+    <span class="wl-moon wl-moon-b" aria-hidden="true"></span>
     <div class="wrap">
-      <div class="card-wl reveal">
-        <div class="kicker center" style="margin-bottom:var(--s5)">The Invitation</div>
-        <h2>Be the first<br>into the dark.</h2>
-        <p class="lead">Join the waitlist for the cover reveal, early chapters, and word of when <em>The Listening Dark</em> arrives.</p>
-        <form class="wl-form" data-waitlist novalidate>
-          <div class="hp" aria-hidden="true"><label>Leave blank<input type="text" tabindex="-1" autocomplete="off"></label></div>
-          <div class="field"><input type="email" placeholder="Enter your email" aria-label="Email address" required></div>
+      <p class="kicker k-gold center reveal">The Invitation</p>
+      <h2 class="reveal">Be the first into <em>the dark.</em></h2>
+      <p class="lead reveal">Join the waitlist for the cover reveal, early chapters, and word of when <em>The Listening Dark</em> arrives.</p>
+      <form class="wl-form reveal" data-waitlist novalidate>
+        <div class="hp" aria-hidden="true"><label>Leave blank<input type="text" tabindex="-1" autocomplete="off"></label></div>
+        <label class="wl-label" for="wl-email">Email address</label>
+        <div class="field">
+          <input id="wl-email" type="email" autocomplete="email" placeholder="you@example.com" required>
           <button class="btn btn-primary" type="submit">Join the Waitlist</button>
-        </form>
-        <p class="form-msg" role="status" aria-live="polite"></p>
-        <p class="wl-note">No noise. One message when it matters. Unsubscribe anytime.</p>
-      </div>
+        </div>
+      </form>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+      <p class="wl-note">No noise. One message when it matters. Unsubscribe anytime.</p>
     </div>
   </section>
   <footer class="footer">
@@ -187,7 +190,7 @@
           <p>The cover reveal and early chapters, straight to you.</p>
           <form data-waitlist novalidate>
             <div class="hp" aria-hidden="true"><label>Leave blank<input type="text" tabindex="-1" autocomplete="off"></label></div>
-            <div class="field"><input type="email" placeholder="you@email.com" aria-label="Email address" required><button class="btn btn-primary btn-mini" type="submit">Join</button></div>
+            <div class="field"><input id="ft-email" type="email" autocomplete="email" placeholder="you@email.com" aria-label="Email address" required><button class="btn btn-primary btn-mini" type="submit">Join</button></div>
             <p class="form-msg" role="status" aria-live="polite"></p>
           </form>
         </div>
