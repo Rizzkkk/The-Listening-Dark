@@ -189,24 +189,6 @@
     });
   });
 
-  /* ---- Excerpt gate (reveal the fade-locked passage) ---- */
-  document.querySelectorAll('[data-unlock]').forEach(function (btn) {
-    btn.addEventListener('click', function (e) {
-      var sel = btn.getAttribute('data-unlock');
-      var gate = document.querySelector(sel);
-      if (gate) {
-        e.preventDefault();
-        gate.classList.remove('locked');
-        var extra = btn.closest('.gate-cta');
-        if (extra) {
-          var wrapEl = btn.parentNode;
-          if (wrapEl && wrapEl !== extra) wrapEl.style.display = 'none';
-          else btn.style.display = 'none';
-        }
-      }
-    });
-  });
-
   /* ---- Email delivery: FormSubmit AJAX → author.kpcap@gmail.com ----
      Free, no account needed. NOTE: the very first submission triggers a
      one-time activation email to that inbox — click "Activate" once and

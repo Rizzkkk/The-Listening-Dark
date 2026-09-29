@@ -9,8 +9,8 @@ so the nav/footer stay identical across every page.
 Run:  python tools/build.py
 Output is standard HTML/CSS/JS — no runtime dependency on this script.
 
-Excerpts, quotes and author bio are taken from the author's own
-manuscript / beta copy with permission (this is the author's site).
+Synopsis, quotes and author bio are taken from the author's own
+back-cover copy and manuscript (this is the author's site).
 """
 import os, base64, datetime
 
@@ -155,7 +155,7 @@ def footer(wl_target):
         </div>
         <div class="foot-col">
           <h4>Explore</h4>
-          <a href="book.html">The Book</a><a href="book.html#excerpt">Chapter One</a><a href="author.html">The Author</a><a href="press.html">Press Kit</a>
+          <a href="book.html">The Book</a><a href="author.html">The Author</a><a href="press.html">Press Kit</a>
         </div>
         <div class="foot-col">
           <h4>Connect</h4>
@@ -196,28 +196,6 @@ def page(filename, title, desc, active, body, wl_target="#waitlist"):
 #  REAL CONTENT — from the manuscript
 # =====================================================================
 
-# Chapter One, opening (verbatim from the beta manuscript)
-EXCERPT_OPEN = """<p class="dropcap">&ldquo;I can&rsquo;t think of anything I want more than to stop running,&rdquo; I grumbled as we jogged through the chilly morning air.</p>
-<p>The rustle of trees, birdsong overhead, the steady rhythm of my breath &mdash; it all usually calmed me. Today, my chest felt too tight for comfort.</p>
-<p>&ldquo;Please,&rdquo; Dezi laughed. &ldquo;You say that every time. Just focus on breakfast. You&rsquo;ll survive.&rdquo;</p>
-<p>&ldquo;You say that every time too,&rdquo; I shot back.</p>
-<p>She grinned without looking at me, the way she always did when she knew she was right and didn&rsquo;t need to prove it. That was Dezi. She&rsquo;d been winning arguments with silence for as long as either of us could remember.</p>
-<p>A few paces ahead, she lifted two fingers and flicked them idly toward a cluster of fallen leaves on the path. They skittered aside without the wind touching them, clearing a neat little corridor for her feet. She didn&rsquo;t even look down. Just kept running.</p>
-<p>I rolled my eyes. &ldquo;You&rsquo;re going to trip over yourself showing off to no one.&rdquo;</p>
-<p>&ldquo;I&rsquo;m not showing off,&rdquo; she said pleasantly. &ldquo;I&rsquo;m optimizing.&rdquo;</p>"""
-
-EXCERPT_MORE = """<p>Neither of us had what you&rsquo;d call <em>real</em> magic. Nobody in town did. What we had was smaller than that &mdash; minor things, quiet things. The kind of magic you didn&rsquo;t talk about in front of parents or strangers. Dezi could nudge objects, coax small flames, make the air around her go still or restless depending on her mood. I was less comfortable with mine. I could feel things before they happened sometimes &mdash; a pressure behind my sternum, a knowing that arrived half a second too early. I didn&rsquo;t like it. It felt less like a gift and more like something trying to get my attention.</p>
-<p>I ignored it when I could.</p>
-<p>This morning it felt like it was pressing too close.</p>
-<p>We rounded the bend where the path split &mdash; left toward the caf&eacute;, right toward the tree line that marked the edge of town. The invisible boundary our parents had drawn for us before we were old enough to push back against it.</p>
-<p>Dezi&rsquo;s steps slowed.</p>
-<p>I already knew what she was going to say before she said it.</p>
-<p>&ldquo;We could just look,&rdquo; she said, tilting her head toward the trees on the right. &ldquo;We don&rsquo;t have to go past the line. Just look.&rdquo;</p>
-<p>&ldquo;We are not doing this again.&rdquo;</p>
-<p>&ldquo;The border is imaginary, Cam.&rdquo;</p>
-<p>&ldquo;The border is our parents&rsquo; entire personality,&rdquo; I said. &ldquo;And I would like to keep mine intact, thank you.&rdquo;</p>
-<p>&ldquo;My mother used to say magic is just the world paying attention to you,&rdquo; Dezi said. &ldquo;That some people the world notices more than others.&rdquo;</p>"""
-
 # =====================================================================
 #  PAGE BODIES
 # =====================================================================
@@ -237,7 +215,6 @@ HOME = f"""  <header class="hero">
       <p class="hero-sub" data-reveal>I don&rsquo;t aim it. I don&rsquo;t need to. <em>It listens.</em></p>
       <div class="hero-cta" data-reveal>
         <a class="btn btn-primary" href="#waitlist">Join the Waitlist</a>
-        <a class="btn btn-ghost" href="#excerpt">Read Chapter One <span class="arrow" aria-hidden="true">&rarr;</span></a>
       </div>
     </div>
     <div class="wrap hero-foot" data-reveal>
@@ -265,11 +242,11 @@ HOME = f"""  <header class="hero">
         </div>
         <div class="prose-head">
           <p class="kicker k-gold reveal">The Story</p>
-          <h2 class="reveal">Dragons choose their riders. <em>Something older chose her.</em></h2>
-          <p class="kicker-note reveal">Chosen not by bloodline or rank, but by something older than either.</p>
+          <h2 class="reveal">Camilla has always believed <em>she was human.</em></h2>
+          <p class="kicker-note reveal">Until one morning, everything changes.</p>
           <div class="prose reveal">
-            <p>When Camilla Ayala is dragged to Etereia &mdash; the realm where those born with extraordinary abilities are trained, classified, and controlled &mdash; she arrives with nothing but grief and a power no one can name. It doesn&rsquo;t respond to will. It doesn&rsquo;t obey. <em>It listens.</em></p>
-            <p class="prose-turn">Then there&rsquo;s the dragon. Ancient beyond measure. Calling to her in the dark.</p>
+            <p>A hidden power awakens within her, tearing apart the life she has always known and drawing her across a border she was never meant to cross.</p>
+            <p class="prose-turn">Beyond it lies a world of ancient magic, powerful beings, and dragons &mdash; a world where nothing is as it seems, and where Camilla may be far more important than she ever imagined.</p>
           </div>
           <dl class="spec spec-ruled reveal">
             <div><dt>Genre</dt><dd>Adult Fantasy Romance</dd></div>
@@ -301,29 +278,7 @@ HOME = f"""  <header class="hero">
     <div class="wrap">
       <span class="qf-mark" aria-hidden="true">&ldquo;</span>
       <blockquote class="reveal">My mother used to say magic is just the world paying attention to you. That some people the world notices more than others.</blockquote>
-      <p class="qf-cite reveal">Dezi &middot; Chapter One</p>
-    </div>
-  </section>
-
-  <section class="section" id="excerpt">
-    <div class="wrap">
-      <div class="reading">
-        <p class="kicker k-gold reveal">An Excerpt</p>
-        <h2 class="excerpt-h reveal">Chapter One</h2>
-        <div class="gate locked" id="home-gate">
-          <div class="reading-body reveal">
-            {EXCERPT_OPEN}
-          </div>
-        </div>
-        <div class="gate-cta reveal">
-          {DIV_STAR}
-          <p class="gate-lead">Keep reading</p>
-          <div class="gate-btns">
-            <a class="btn btn-primary" href="book.html#excerpt">Read Chapter One</a>
-            <a class="btn btn-ghost" href="#waitlist">Join the Waitlist</a>
-          </div>
-        </div>
-      </div>
+      <p class="qf-cite reveal">Dezi</p>
     </div>
   </section>
 
@@ -338,7 +293,6 @@ HOME = f"""  <header class="hero">
           <p class="kicker k-gold reveal">The Author</p>
           <h2 class="reveal">KP Cap</h2>
           <p class="ha-teaser reveal">A military spouse and a collector of random trinkets, KP Cap started this novel in 2017, rewrote it more times than she can count, and finished it during her baby&rsquo;s nap times. She has been dreaming up fantasy worlds since the sixth grade. <em>The Listening Dark</em> is her debut.</p>
-          <p class="ha-comp reveal">ACOTAR energy, Throne of Glass pacing.</p>
           <div class="ha-links reveal">
             <a class="link-txt" href="author.html">Meet the author <span class="arrow" aria-hidden="true">&rarr;</span></a>
             <a href="https://instagram.com/kpcapitulo" rel="noopener">Instagram @kpcapitulo</a>
@@ -366,13 +320,13 @@ BOOK = f"""  <header class="page-hero">
         {cover_block(True)}
         <div class="prose-head">
           <div class="kicker reveal">The Story</div>
-          <h2 class="reveal">What the dark hears, it keeps.</h2>
+          <h2 class="reveal">Camilla has always believed <em>she was human.</em></h2>
           <div class="prose reveal">
-            <p>When Camilla Ayala is dragged to Etereia, the realm where those born with extraordinary abilities are trained, classified, and controlled, she arrives with nothing but grief and a power no one can name. Etereia classifies everything. Every gift, every ability, every threat. But the cold, quiet force beneath Camilla&rsquo;s skin won&rsquo;t cooperate with their systems. It doesn&rsquo;t respond to will. It doesn&rsquo;t obey. <em>It listens.</em> And the people who run this place have very specific plans for things they can&rsquo;t categorize.</p>
-            <p>Then there&rsquo;s the dragon. Ancient beyond measure. Calling to her in the dark.</p>
-            <p>And the rider who trains her without being asked, who sees through every wall she builds, who looks at her like he&rsquo;s waiting for her to remember something she&rsquo;s never known.</p>
-            <p>Camilla didn&rsquo;t come to Etereia to change anything. But some powers don&rsquo;t ask permission. And some truths, once they start surfacing, don&rsquo;t know how to stop.</p>
-            <p><em>The Listening Dark</em> is an adult fantasy novel about power that can&rsquo;t be contained, origins that were never meant to be found, and what happens when the world you were hidden from decides it wants you back.</p>
+            <p>Until one morning, everything changes.</p>
+            <p>A hidden power awakens within her, tearing apart the life she has always known and drawing her across a border she was never meant to cross.</p>
+            <p>Beyond it lies a world of ancient magic, powerful beings, and dragons &mdash; a world where nothing is as it seems, and where Camilla may be far more important than she ever imagined.</p>
+            <p>As secrets unravel and forbidden connections begin to form, Camilla is forced to confront the truth about where she came from.</p>
+            <p>And the more she learns, the more she realizes that the life she knew was only <em>the beginning.</em></p>
           </div>
         </div>
       </div>
@@ -384,25 +338,6 @@ BOOK = f"""  <header class="page-hero">
       {DIV_STAR}
       <blockquote class="reveal">&ldquo;Magic is not merely a force &mdash; it is a relationship. Between the self and the world. Between what exists and <em>what it reaches toward.</em>&rdquo;</blockquote>
       <cite class="reveal">From <em>The Listening Dark</em></cite>
-    </div>
-  </section>
-
-  <section class="section" id="excerpt">
-    <div class="wrap">
-      <div class="reading">
-        <div class="kicker center reveal">Read the Opening &middot; Chapter One</div>
-        <div class="gate locked" id="book-gate">
-          <div class="reading-body reveal">
-            {EXCERPT_OPEN}
-            {EXCERPT_MORE}
-          </div>
-        </div>
-        <div class="gate-cta reveal">
-          <div class="kicker center">Keep reading</div>
-          <a class="btn btn-primary" href="#waitlist">Join the waitlist to read on</a>
-          <div style="margin-top:var(--s4)"><button class="link-txt" type="button" data-unlock="#book-gate">Or finish this excerpt <span class="arrow">&darr;</span></button></div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -496,58 +431,19 @@ AUTHOR = f"""  <header class="page-hero">
 {waitlist_section()}"""
 
 # ---------- PRESS ----------
-def asset(name, meta, icon, href="#", live=False):
-    dl = ' download' if live else ''
-    return f"""<div class="asset"><div class="thumb">{icon}</div><div><div class="a-name">{name}</div><div class="a-meta">{meta}</div></div><a class="btn btn-ghost btn-mini" href="{href}"{dl} aria-label="Download {name}">Download</a></div>"""
-
-ICON_IMG = """<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><path d="M4 17l5-4 4 3 3-2 4 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>"""
-ICON_DOC = """<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 3h8l4 4v14H6z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M14 3v4h4M9 12h6M9 15h6M9 9h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>"""
-
 PRESS = f"""  <header class="page-hero">
     <div class="wrap">
       <div class="kicker center reveal">Press Kit</div>
       <h1 class="reveal">For the Press</h1>
-      <p class="lede reveal">Everything you need to write about <em>The Listening Dark</em> and KP&nbsp;Cap.</p>
+      <p class="lede reveal">Assets and press materials for <em>The Listening Dark</em> are coming soon.</p>
     </div>
   </header>
 
   <section class="section-sm">
-    <div class="wrap">
-      <div class="kicker reveal" style="margin-bottom:var(--s7)">Downloads</div>
-      <div class="grid grid-3 stagger">
-        {asset("Book cover (web res)", "JPG &middot; 900&times;1333 &middot; available now", ICON_IMG, "assets/cover.jpg", True)}
-        {asset("Author photo", "JPG &middot; coming soon", ICON_IMG)}
-        {asset("Title logo &amp; twin-moon mark", "SVG &middot; PNG &middot; coming soon", ICON_DOC)}
-        {asset("One-sheet", "PDF &middot; coming soon", ICON_DOC)}
-        {asset("Sample chapter", "PDF &middot; coming soon", ICON_DOC)}
-        {asset("Full press kit", "ZIP &middot; coming soon", ICON_DOC)}
-      </div>
-      <p class="placeholder-note reveal" style="margin-top:var(--s6)">Download links will be connected as final assets are approved.</p>
-    </div>
-  </section>
-
-  <section class="section-sm">
-    <div class="wrap wrap-narrow">
-      <div class="kicker reveal" style="margin-bottom:var(--s6)">Fact Sheet</div>
-      <dl class="spec reveal" style="border-top:1px solid var(--line)">
-        <div><dt>Title</dt><dd>The Listening Dark</dd></div>
-        <div><dt>Author</dt><dd>KP Cap</dd></div>
-        <div><dt>Genre</dt><dd>Adult Fantasy Romance</dd></div>
-        <div><dt>Series</dt><dd>Book One</dd></div>
-        <div><dt>Publication</dt><dd>To Be Announced</dd></div>
-        <div><dt>Audience</dt><dd>Adult &middot; 18+</dd></div>
-        <div><dt>Instagram</dt><dd>@kpcapitulo</dd></div>
-        <div><dt>TikTok</dt><dd>@kp.capitulo</dd></div>
-      </dl>
-      <div class="kicker reveal" style="margin:var(--s8) 0 var(--s5)">Boilerplate</div>
-      <div class="prose reveal"><p><em>The Listening Dark</em> is the debut adult romantasy from KP Cap &mdash; a story of dragons that choose disruption, an academy that classifies every power in the realm, and a girl whose magic refuses classification. Romance, found family, and a world entirely its own. Book One of a planned series.</p></div>
-    </div>
-  </section>
-
-  <section class="section-sm">
     <div class="wrap" style="text-align:center">
-      <div class="kicker center reveal" style="justify-content:center;margin-bottom:var(--s5)">Press &amp; Review Enquiries</div>
-      <p class="reveal" style="font-family:var(--f-read);color:var(--ash);max-width:40ch;margin:0 auto var(--s6)">For interviews, advance copies, and rights enquiries, get in touch.</p>
+      {DIV_STAR}
+      <p class="reveal" style="font-family:var(--f-read);color:var(--ash);max-width:44ch;margin:var(--s6) auto 0">The press kit is being put together &mdash; fact sheet, cover art, author photo, and downloadable assets are on the way.</p>
+      <p class="reveal" style="font-family:var(--f-read);color:var(--ash);max-width:44ch;margin:var(--s5) auto var(--s7)">For interviews, advance copies, and rights enquiries in the meantime, get in touch.</p>
       <a class="btn btn-primary reveal" href="contact.html">Contact for Press</a>
     </div>
   </section>
@@ -572,8 +468,8 @@ FAQ = f"""  <header class="page-hero">
         {faq_item("When does The Listening Dark come out?", "A publication date hasn&rsquo;t been announced yet &mdash; advance beta copies are with early readers now. Join the waitlist and you&rsquo;ll be the first to know.")}
         {faq_item("What is it about?", "An adult fantasy romance: a girl hidden her whole life from the academy that classifies magic, the power waking in her blood that fits no classification, and the dragons &mdash; and people &mdash; who choose her. A fuller synopsis lives on <a href='book.html'>The Book</a>.")}
         {faq_item("Is it a series?", "Yes &mdash; this is Book One. Some threads are deliberately left open; not everything is meant to close in the first book.")}
-        {faq_item("Is it for me?", "It&rsquo;s adult fantasy &mdash; explicit content, violence, and language. Recommended 18+. If ACOTAR energy and Throne of Glass pacing are your thing, you&rsquo;re in the right place.")}
-        {faq_item("Can I read a sample?", "The opening of Chapter One is on <a href='book.html#excerpt'>the book page</a>, with more coming to waitlist members.")}
+        {faq_item("Is it for me?", "It&rsquo;s adult fantasy &mdash; explicit content, violence, and language. Recommended 18+.")}
+        {faq_item("Can I read a sample?", "Not yet &mdash; early chapters go out to waitlist members first, so join the list and they&rsquo;ll land in your inbox.")}
         {faq_item("How do I get an advance or review copy?", "Reviewers, press, and book folk can reach out via <a href='contact.html'>Contact</a>.")}
       </div>
     </div>
@@ -605,7 +501,6 @@ CONTACT = """  <header class="page-hero">
           <p class="form-msg" role="status" aria-live="polite" style="margin-top:var(--s5)"></p>
         </div>
       </form>
-      <p class="reveal" style="text-align:center;margin-top:var(--s7);font-family:var(--f-read);color:var(--ash)">Prefer email? Write directly to <a href="mailto:author.kpcap@gmail.com" style="color:var(--ember);text-decoration:underline;text-underline-offset:3px">author.kpcap@gmail.com</a></p>
     </div>
   </section>
 """
@@ -658,11 +553,11 @@ TERMS = legal_body("Terms of Service", "The agreement for using this site.", [
     ("Acceptance",
      "<p>By using this website you agree to these terms. If you don&rsquo;t agree, please don&rsquo;t use the site. The site exists to share information about <em>The Listening Dark</em> and to let readers join the waitlist and contact the author.</p>"),
     ("Intellectual property",
-     "<p>Everything on this site &mdash; the text of <em>The Listening Dark</em>, including the Chapter One excerpt, the synopsis, the cover artwork, the title, character names, and the world of the book &mdash; is &copy; KP Cap, all rights reserved. You may browse and share links freely, and quote brief passages with credit for reviews and commentary. You may not republish the excerpt in full, use the artwork commercially, or train AI systems on the book&rsquo;s text, without written permission.</p>"),
+     "<p>Everything on this site &mdash; the text of <em>The Listening Dark</em>, the synopsis, the cover artwork, the title, character names, and the world of the book &mdash; is &copy; KP Cap, all rights reserved. You may browse and share links freely, and quote brief passages with credit for reviews and commentary. You may not republish extracts in full, use the artwork commercially, or train AI systems on the book&rsquo;s text, without written permission.</p>"),
     ("Content note",
      "<p>The book described on this site is adult fantasy containing explicit content, violence, and language. Site content referencing the book is intended for readers 18 and over.</p>"),
     ("Acceptable use",
-     "<p>Please don&rsquo;t misuse the site: no scraping the excerpt for republication, no submitting forms with someone else&rsquo;s email address, and no attempting to interfere with the site&rsquo;s operation.</p>"),
+     "<p>Please don&rsquo;t misuse the site: no republishing site text wholesale, no submitting forms with someone else&rsquo;s email address, and no attempting to interfere with the site&rsquo;s operation.</p>"),
     ("Third-party links",
      "<p>The site links to third-party platforms (Instagram, TikTok) and uses a third-party service to deliver form submissions. Those services have their own terms and policies, which we don&rsquo;t control.</p>"),
     ("No warranties",
@@ -702,16 +597,16 @@ NOTFOUND = """  <section class="err">
 #  BUILD
 # =====================================================================
 page("index.html", "The Listening Dark — an adult fantasy romance by KP Cap",
-     "Dragons choose their riders. Something older chose her. The Listening Dark, Book One of KP Cap's adult romantasy debut. Read Chapter One and join the waitlist.",
+     "Dragons choose their riders. Something older chose her. The Listening Dark, Book One of KP Cap's adult romantasy debut. Join the waitlist.",
      "home", HOME, wl_target="#waitlist")
 page("book.html", "The Book — The Listening Dark",
-     "The Listening Dark, Book One: an adult fantasy romance about a power that refuses classification, the academy that hunts it, and the dragon that has been waiting. Read the opening of Chapter One.",
+     "The Listening Dark, Book One: an adult fantasy romance about a power that refuses classification, the academy that hunts it, and the dragon that has been waiting.",
      "book", BOOK, wl_target="#waitlist")
 page("author.html", "The Author — KP Cap",
      "KP Cap — military spouse, world-builder since sixth grade, debut romantasy author. The Listening Dark was written between 2017 and her baby's nap times.",
      "author", AUTHOR, wl_target="#waitlist")
 page("press.html", "Press Kit — The Listening Dark",
-     "Press kit for The Listening Dark by KP Cap: fact sheet, boilerplate, assets, and enquiries.",
+     "Press materials for The Listening Dark by KP Cap are coming soon. Interview and review enquiries welcome.",
      "press", PRESS, wl_target="#waitlist")
 page("faq.html", "FAQ — The Listening Dark",
      "Frequently asked questions about The Listening Dark by KP Cap — release, series plans, content notes, and samples.",

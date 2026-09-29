@@ -309,18 +309,6 @@ body.menu-open .brand, body.menu-open .nav-links{ opacity:0; pointer-events:none
 .quote blockquote em{ color:var(--ember); }
 .quote cite{ font-family:var(--f-mono); font-style:normal; font-size:.68rem; letter-spacing:.24em; text-transform:uppercase; color:var(--ash); }
 
-/* ---- Excerpt reading column + fade gate ---- */
-.reading{ max-width:62ch; margin-inline:auto; }
-.reading .kicker{ margin-bottom:var(--s6); }
-.reading-body{ font-family:var(--f-read); font-size:1.2rem; line-height:1.85; color:var(--bone); position:relative; }
-.reading-body p{ margin:0 0 var(--s5); }
-.reading-body .dropcap::first-letter{ font-family:var(--f-display); font-variation-settings:'opsz' 144,'wght' 430; float:left; font-size:3.6em; line-height:.72; padding:.06em .12em 0 0; color:var(--ember); }
-.gate{ position:relative; }
-.gate.locked .reading-body{ max-height:28em; overflow:hidden; }
-.gate.locked .reading-body::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:12em; background:linear-gradient(transparent, var(--night) 92%); pointer-events:none; }
-.gate-cta{ text-align:center; margin-top:var(--s7); }
-.gate-cta .kicker{ justify-content:center; margin-bottom:var(--s5); }
-
 /* ---- Cards / grids ---- */
 .grid{ display:grid; gap:var(--s5); }
 .grid-3{ grid-template-columns:1fr; }
@@ -491,7 +479,7 @@ body.menu-open .brand, body.menu-open .nav-links{ opacity:0; pointer-events:none
 /* ===================================================================
    HOME - redesign from the Claude Design handoff (2026-09)
    Section order: hero, premise, story, soft ask, pull-quote,
-   excerpt, author, waitlist. Comps: listening-dark-home-handoff.
+   author, waitlist. Comps: listening-dark-home-handoff.
    =================================================================== */
 
 /* gold kicker, no leading rule - the home page's label treatment */
@@ -568,15 +556,6 @@ body.menu-open .brand, body.menu-open .nav-links{ opacity:0; pointer-events:none
   color:var(--bone-bright); text-wrap:balance; }
 .qf-cite{ margin:var(--s6) 0 0; font-family:var(--f-mono); font-size:.62rem;
   letter-spacing:.2em; text-transform:uppercase; color:var(--smoke); }
-
-/* ---- Excerpt ---- */
-.reading .excerpt-h{ font-family:var(--f-display); font-variation-settings:'opsz' 144,'wght' 300;
-  font-size:clamp(2rem,3.6vw,3rem); letter-spacing:-.02em; margin:var(--s4) 0 var(--s7); color:var(--bone-bright); }
-.gate-cta .divider-star{ margin-bottom:var(--s6); }
-.gate-lead{ font-family:var(--f-display); font-variation-settings:'opsz' 96,'wght' 300; font-style:italic;
-  font-size:clamp(1.5rem,2.4vw,2rem); color:var(--bone-bright); margin:0 0 var(--s6); }
-.gate-btns{ display:flex; flex-direction:column; gap:var(--s3); }
-@media(min-width:640px){ .gate-btns{ flex-direction:row; justify-content:center; gap:var(--s5); } }
 
 /* ---- Author (home teaser) ---- */
 .home-author{ border-top:1px solid var(--line); }

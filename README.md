@@ -6,7 +6,7 @@ Plain **HTML / CSS / JS** — no build tools, no framework, no dependencies to i
 
 > Concept: *a violet night sky under twin moons.* Moonlight text, gold-foil and
 > Danaya-violet accents, a static starfield, and the book's own words doing the
-> selling — real Chapter One excerpt, real quotes, real bio. Calm by design:
+> selling — the real back-cover copy, real quotes, real bio. Calm by design:
 > no flicker, no grain, comfortable contrast throughout.
 
 ## Assets in place
@@ -62,9 +62,9 @@ Drag-and-drop the whole folder to any static host — no configuration needed:
 | File | Page |
 |---|---|
 | `index.html` | Home — the full cinematic scroll |
-| `book.html` | About the Book (synopsis, excerpt, themes, details) |
+| `book.html` | About the Book (synopsis, themes, details) |
 | `author.html` | About the Author (bio, portrait, dedication) |
-| `press.html` | Press Kit |
+| `press.html` | Press Kit (emptied — placeholder until assets are approved) |
 | `faq.html` | FAQ |
 | `contact.html` | Contact |
 | `privacy.html` · `terms.html` · `cookies.html` · `accessibility.html` | Legal |
@@ -75,7 +75,7 @@ Drag-and-drop the whole folder to any static host — no configuration needed:
 ```
 index.html …            all pages (plain HTML, edit directly)
 css/style.css           the entire design system + components
-js/main.js              all behaviour (nav, menu, reveals, excerpt gate, forms)
+js/main.js              all behaviour (nav, menu, reveals, forms)
 assets/fonts/           Fraunces · Newsreader · Inter · Space Mono (local .woff2)
 tools/build.py          optional generator — regenerates the HTML from shared
                         nav/footer fragments so they never drift. NOT required
@@ -91,7 +91,7 @@ tools/build.py          optional generator — regenerates the HTML from shared
 
 ## Before launch — what's left
 
-Real content is now live: Chapter One excerpt, quotes, synopsis, author bio,
+Real content is now live: the official back-cover synopsis, quotes, author bio,
 dedication, socials (@kpcapitulo / @kp.capitulo), genre & content notes.
 Still to do:
 
