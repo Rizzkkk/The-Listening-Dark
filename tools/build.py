@@ -14,6 +14,9 @@ back-cover copy and manuscript (this is the author's site).
 """
 import os, base64, datetime
 
+KINDLE_URL = "https://a.co/d/0e4UUKSl"
+PUB_DATE = "October 30, 2026"
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 YEAR = datetime.date.today().year
 
@@ -219,7 +222,7 @@ HOME = f"""  <header class="hero">
     </div>
     <div class="wrap hero-foot" data-reveal>
       <span class="rule" aria-hidden="true"></span>
-      <span class="pub">Publication &middot; To Be Announced</span>
+      <span class="pub">Publication &middot; {PUB_DATE}</span>
     </div>
   </header>
 
@@ -251,7 +254,7 @@ HOME = f"""  <header class="hero">
           <dl class="spec spec-ruled reveal">
             <div><dt>Genre</dt><dd>Adult Fantasy Romance</dd></div>
             <div><dt>Series</dt><dd>Book One</dd></div>
-            <div><dt>Publication</dt><dd>To Be Announced</dd></div>
+            <div><dt>Publication</dt><dd>{PUB_DATE}</dd></div>
           </dl>
           <p class="advisory reveal">18+ &middot; Contains explicit content, violence, and strong language.</p>
           <a class="link-txt reveal" href="book.html">More about the book <span class="arrow" aria-hidden="true">&rarr;</span></a>
@@ -265,9 +268,9 @@ HOME = f"""  <header class="hero">
       <div class="soft-ask reveal">
         <div class="sa-left">
           <span class="sa-moons" aria-hidden="true"><i></i><i></i></span>
-          <p>The cover reveal and early chapters, straight to you.</p>
+          <p>The Kindle edition is available to pre-order now.</p>
         </div>
-        <a class="link-txt" href="#waitlist">Join the Waitlist <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="link-txt" href="{KINDLE_URL}" target="_blank" rel="noopener">Pre-order on Kindle <span class="arrow" aria-hidden="true">&rarr;</span></a>
       </div>
     </div>
   </section>
@@ -358,8 +361,8 @@ BOOK = f"""  <header class="page-hero">
       <dl class="spec reveal" style="border-top:1px solid var(--line)">
         <div><dt>Genre</dt><dd>Adult Fantasy Romance</dd></div>
         <div><dt>Series</dt><dd>Book One</dd></div>
-        <div><dt>Formats</dt><dd>To Be Announced</dd></div>
-        <div><dt>Publication</dt><dd>To Be Announced</dd></div>
+        <div><dt>Formats</dt><dd>Kindle eBook</dd></div>
+        <div><dt>Publication</dt><dd>{PUB_DATE}</dd></div>
         <div><dt>Audience</dt><dd>Adult &middot; 18+</dd></div>
       </dl>
       <div class="note reveal" style="margin-top:var(--s8)">
@@ -423,7 +426,7 @@ AUTHOR = f"""  <header class="page-hero">
         <div class="tl-item"><div class="tl-date">2017</div><h3>The first draft</h3><p>A world that started in a notebook and refused to stay there.</p></div>
         <div class="tl-item"><div class="tl-date">2017 &ndash; 2024</div><h3>The rewrites</h3><p>More of them than she can count. The story kept growing; so did the writer.</p></div>
         <div class="tl-item"><div class="tl-date">2025</div><h3>Beta copies go out</h3><p>The manuscript reaches its first readers as an advance beta copy.</p></div>
-        <div class="tl-item"><div class="tl-date">Coming soon</div><h3>Publication day</h3><p>Date to be announced. The waitlist hears it first.</p></div>
+        <div class="tl-item"><div class="tl-date">{PUB_DATE}</div><h3>Publication day</h3><p>The Kindle edition is <a href='{KINDLE_URL}' target='_blank' rel='noopener'>available to pre-order now</a>.</p></div>
       </div>
     </div>
   </section>
@@ -465,7 +468,7 @@ FAQ = f"""  <header class="page-hero">
   <section class="section-sm">
     <div class="wrap">
       <div class="accordion reveal">
-        {faq_item("When does The Listening Dark come out?", "A publication date hasn&rsquo;t been announced yet &mdash; advance beta copies are with early readers now. Join the waitlist and you&rsquo;ll be the first to know.")}
+        {faq_item("When does The Listening Dark come out?", PUB_DATE + ". The Kindle edition is <a href='" + KINDLE_URL + "' target='_blank' rel='noopener'>available to pre-order on Amazon</a> now.")}
         {faq_item("What is it about?", "An adult fantasy romance: a girl hidden her whole life from the academy that classifies magic, the power waking in her blood that fits no classification, and the dragons &mdash; and people &mdash; who choose her. A fuller synopsis lives on <a href='book.html'>The Book</a>.")}
         {faq_item("Is it a series?", "Yes &mdash; this is Book One. Some threads are deliberately left open; not everything is meant to close in the first book.")}
         {faq_item("Is it for me?", "It&rsquo;s adult fantasy &mdash; explicit content, violence, and language. Recommended 18+.")}

@@ -35,6 +35,14 @@ git push && ssh USER@191.215.37.101 'sudo git -C /var/www/kpcapitulo pull && sud
 
 ---
 
+## 2026-10-01
+
+- Publication date set to **October 30, 2026** (`PUB_DATE` in `tools/build.py`):
+  home hero, home and book details, author timeline, FAQ.
+- The home page "cover reveal" waitlist card now links to the Kindle pre-order
+  (`KINDLE_URL`). Book details list the format as Kindle eBook.
+- The waitlist itself (nav button, bottom section, footer form) is unchanged.
+
 ## 2026-09-29 — `f26ef22`
 
 - Removed the Chapter One excerpt everywhere: the `#excerpt` sections, the hero
