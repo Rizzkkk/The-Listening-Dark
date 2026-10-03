@@ -14,8 +14,14 @@ back-cover copy and manuscript (this is the author's site).
 """
 import os, base64, datetime
 
+SITE = "https://kpcapitulo.com"
 KINDLE_URL = "https://a.co/d/0e4UUKSl"
 PUB_DATE = "October 30, 2026"
+PUB_DATE_ISO = "2026-10-30"
+# release day: set False, rebuild, deploy
+PRE_ORDER = True
+BUY_LABEL = "Pre-order on Kindle" if PRE_ORDER else "Buy on Kindle"
+AVAIL = "available to pre-order now" if PRE_ORDER else "out now"
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 YEAR = datetime.date.today().year
@@ -51,7 +57,8 @@ STAR_4 = ('<svg class="star" aria-hidden="true" width="16" height="16" viewBox="
 
 DIV_STAR = """<div class="divider-star" aria-hidden="true"><span>&#10022;&nbsp;&nbsp;&#10022;</span></div>"""
 
-def head(title, desc):
+def head(title, desc, url=None, extra=""):
+    canon = f'<link rel="canonical" href="{url}">\n<meta property="og:url" content="{url}">\n' if url else ""
     return f"""<!doctype html>
 <html lang="en" data-theme="dark">
 <head>
@@ -64,12 +71,12 @@ def head(title, desc):
 <meta property="og:site_name" content="The Listening Dark">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
-<meta property="og:image" content="assets/og.png">
+<meta property="og:image" content="{SITE}/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="assets/og.png">
-<link rel="icon" href="{FAVICON}">
+<meta name="twitter:image" content="{SITE}/assets/og.png">
+{canon}{extra}<link rel="icon" href="{FAVICON}">
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/fraunces.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/inter.woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css">
@@ -79,7 +86,10 @@ def head(title, desc):
 <div class="sky" aria-hidden="true"></div>
 """
 
-def nav(active, wl_target):
+def kindle_btn(cls=""):
+    return f'<a class="btn btn-primary{cls}" href="{KINDLE_URL}" target="_blank" rel="noopener">{BUY_LABEL}</a>'
+
+def nav(active):
     def link(href, label, key):
         cur = ' aria-current="page"' if key == active else ''
         return f'<a href="{href}"{cur}>{label}</a>'
@@ -94,7 +104,7 @@ def nav(active, wl_target):
     <a class="brand" href="index.html" aria-label="The Listening Dark — home">{MARK}<span class="word">The Listening Dark</span></a>
     <div class="nav-links">
       {links}
-      <a class="btn btn-primary btn-mini" href="{wl_target}">Join the Waitlist</a>
+      {kindle_btn(" btn-mini")}
     </div>
     <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
   </div>
@@ -108,7 +118,7 @@ def nav(active, wl_target):
     <a href="faq.html">FAQ</a>
   </nav>
   <div class="menu-foot">
-    <a class="btn btn-primary" href="{wl_target}">Join the Waitlist</a>
+    {kindle_btn()}
     <div class="menu-social"><a href="https://instagram.com/kpcapitulo" rel="noopener">Instagram</a><a href="https://tiktok.com/@kp.capitulo" rel="noopener">TikTok</a><a href="contact.html">Contact</a></div>
   </div>
 </div>
@@ -124,21 +134,21 @@ def cover_block(large=False):
         </div>"""
 
 def waitlist_section():
-    """The one conversion on every page. Full-bleed, twin moons cropped by the
-    section's top edge, with a visible field label (not just aria-label)."""
+    """Secondary ask now Kindle is out: print editions and Book Two. Full-bleed,
+    twin moons cropped by the section's top edge, visible field label."""
     return """  <section class="section waitlist" id="waitlist">
     <span class="wl-moon wl-moon-a" aria-hidden="true"></span>
     <span class="wl-moon wl-moon-b" aria-hidden="true"></span>
     <div class="wrap">
       <p class="kicker k-gold center reveal">The Invitation</p>
-      <h2 class="reveal">Be the first into <em>the dark.</em></h2>
-      <p class="lead reveal">Join the waitlist for the cover reveal, early chapters, and word of when <em>The Listening Dark</em> arrives.</p>
+      <h2 class="reveal">Hold it in <em>your hands.</em></h2>
+      <p class="lead reveal">The paperback and hardcover are on their way. Leave your email and we&rsquo;ll tell you the day they land, along with first word on Book Two.</p>
       <form class="wl-form reveal" data-waitlist novalidate>
         <div class="hp" aria-hidden="true"><label>Leave blank<input type="text" tabindex="-1" autocomplete="off"></label></div>
         <label class="wl-label" for="wl-email">Email address</label>
         <div class="field">
           <input id="wl-email" type="email" autocomplete="email" placeholder="you@example.com" required>
-          <button class="btn btn-primary" type="submit">Join the Waitlist</button>
+          <button class="btn btn-primary" type="submit">Notify Me</button>
         </div>
       </form>
       <p class="form-msg" role="status" aria-live="polite"></p>
@@ -162,11 +172,11 @@ def footer(wl_target):
         </div>
         <div class="foot-col">
           <h4>Connect</h4>
-          <a href="{wl_target}">Join the Waitlist</a><a href="contact.html">Contact</a><a href="https://instagram.com/kpcapitulo" rel="noopener">Instagram</a><a href="https://tiktok.com/@kp.capitulo" rel="noopener">TikTok</a>
+          <a href="{wl_target}">Get updates</a><a href="contact.html">Contact</a><a href="https://instagram.com/kpcapitulo" rel="noopener">Instagram</a><a href="https://tiktok.com/@kp.capitulo" rel="noopener">TikTok</a>
         </div>
         <div class="foot-col foot-mini">
-          <h4>Enter the dark first</h4>
-          <p>The cover reveal and early chapters, straight to you.</p>
+          <h4>Print editions &amp; Book Two</h4>
+          <p>One email when the paperback lands. No noise.</p>
           <form data-waitlist novalidate>
             <div class="hp" aria-hidden="true"><label>Leave blank<input type="text" tabindex="-1" autocomplete="off"></label></div>
             <div class="field"><input id="ft-email" type="email" autocomplete="email" placeholder="you@email.com" aria-label="Email address" required><button class="btn btn-primary btn-mini" type="submit">Join</button></div>
@@ -189,8 +199,14 @@ def footer(wl_target):
 </html>
 """
 
-def page(filename, title, desc, active, body, wl_target="#waitlist"):
-    html = head(title, desc) + nav(active, wl_target) + '<main class="content" id="main"><span id="top"></span>\n' + body + footer(wl_target)
+PAGES = []
+
+def page(filename, title, desc, active, body, wl_target="#waitlist", extra_head=""):
+    url = None
+    if filename != "404.html":
+        url = SITE + "/" + ("" if filename == "index.html" else filename)
+        PAGES.append(url)
+    html = head(title, desc, url, extra_head) + nav(active) + '<main class="content" id="main"><span id="top"></span>\n' + body + footer(wl_target)
     with open(os.path.join(ROOT, filename), "w", encoding="utf-8") as f:
         f.write(html)
     print("wrote", filename, f"({len(html)} bytes)")
@@ -217,7 +233,8 @@ HOME = f"""  <header class="hero">
       </h1>
       <p class="hero-sub" data-reveal>I don&rsquo;t aim it. I don&rsquo;t need to. <em>It listens.</em></p>
       <div class="hero-cta" data-reveal>
-        <a class="btn btn-primary" href="#waitlist">Join the Waitlist</a>
+        {kindle_btn()}
+        <a class="btn btn-ghost" href="#waitlist">Get print &amp; Book Two news</a>
       </div>
     </div>
     <div class="wrap hero-foot" data-reveal>
@@ -268,9 +285,9 @@ HOME = f"""  <header class="hero">
       <div class="soft-ask reveal">
         <div class="sa-left">
           <span class="sa-moons" aria-hidden="true"><i></i><i></i></span>
-          <p>The Kindle edition is available to pre-order now.</p>
+          <p>The Kindle edition is {AVAIL}.</p>
         </div>
-        <a class="link-txt" href="{KINDLE_URL}" target="_blank" rel="noopener">Pre-order on Kindle <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="link-txt" href="{KINDLE_URL}" target="_blank" rel="noopener">{BUY_LABEL} <span class="arrow" aria-hidden="true">&rarr;</span></a>
       </div>
     </div>
   </section>
@@ -426,7 +443,7 @@ AUTHOR = f"""  <header class="page-hero">
         <div class="tl-item"><div class="tl-date">2017</div><h3>The first draft</h3><p>A world that started in a notebook and refused to stay there.</p></div>
         <div class="tl-item"><div class="tl-date">2017 &ndash; 2024</div><h3>The rewrites</h3><p>More of them than she can count. The story kept growing; so did the writer.</p></div>
         <div class="tl-item"><div class="tl-date">2025</div><h3>Beta copies go out</h3><p>The manuscript reaches its first readers as an advance beta copy.</p></div>
-        <div class="tl-item"><div class="tl-date">{PUB_DATE}</div><h3>Publication day</h3><p>The Kindle edition is <a href='{KINDLE_URL}' target='_blank' rel='noopener'>available to pre-order now</a>.</p></div>
+        <div class="tl-item"><div class="tl-date">{PUB_DATE}</div><h3>Publication day</h3><p>The Kindle edition is <a href='{KINDLE_URL}' target='_blank' rel='noopener'>{AVAIL}</a>.</p></div>
       </div>
     </div>
   </section>
@@ -468,11 +485,12 @@ FAQ = f"""  <header class="page-hero">
   <section class="section-sm">
     <div class="wrap">
       <div class="accordion reveal">
-        {faq_item("When does The Listening Dark come out?", PUB_DATE + ". The Kindle edition is <a href='" + KINDLE_URL + "' target='_blank' rel='noopener'>available to pre-order on Amazon</a> now.")}
+        {faq_item("When does The Listening Dark come out?", PUB_DATE + ". The Kindle edition is <a href='" + KINDLE_URL + "' target='_blank' rel='noopener'>" + AVAIL + " on Amazon</a>.")}
         {faq_item("What is it about?", "An adult fantasy romance: a girl hidden her whole life from the academy that classifies magic, the power waking in her blood that fits no classification, and the dragons &mdash; and people &mdash; who choose her. A fuller synopsis lives on <a href='book.html'>The Book</a>.")}
         {faq_item("Is it a series?", "Yes &mdash; this is Book One. Some threads are deliberately left open; not everything is meant to close in the first book.")}
         {faq_item("Is it for me?", "It&rsquo;s adult fantasy &mdash; explicit content, violence, and language. Recommended 18+.")}
-        {faq_item("Can I read a sample?", "Not yet &mdash; early chapters go out to waitlist members first, so join the list and they&rsquo;ll land in your inbox.")}
+        {faq_item("Will there be a paperback or hardcover?", "Yes &mdash; print editions are on their way. <a href='#waitlist'>Leave your email</a> and you&rsquo;ll hear the day they land.")}
+        {faq_item("Can I read a sample?", "Once the Kindle edition is out, the &ldquo;Read sample&rdquo; button on its <a href='" + KINDLE_URL + "' target='_blank' rel='noopener'>Amazon page</a> gives you the opening pages free.")}
         {faq_item("How do I get an advance or review copy?", "Reviewers, press, and book folk can reach out via <a href='contact.html'>Contact</a>.")}
       </div>
     </div>
@@ -536,10 +554,10 @@ PRIVACY = legal_body("Privacy Policy", "How we handle the little we collect.", [
      f"<p>This website promotes <em>The Listening Dark</em>, a novel by KP Cap. It is run by the author. For anything in this policy, contact {CONTACT_EMAIL}.</p>"),
     ("What we collect",
      "<p>We keep it minimal. There are no accounts, no payments, and no advertising on this site. The only personal information we collect is what you choose to send us:</p>"
-     "<ul><li><strong>Waitlist signups</strong> &mdash; the email address you enter in a waitlist form.</li>"
+     "<ul><li><strong>Update signups</strong> &mdash; the email address you enter in a signup form.</li>"
      "<li><strong>Contact messages</strong> &mdash; the name, email address, subject, and message you enter in the contact form.</li></ul>"),
     ("How we use it",
-     "<p>Your waitlist email is used for one thing: book news &mdash; the cover reveal, early chapters, and release announcements for <em>The Listening Dark</em>. Contact messages are used only to read and reply to you. We never sell, rent, or trade your information, and we don&rsquo;t send anything unrelated to the book.</p>"),
+     "<p>Your signup email is used for one thing: book news &mdash; print edition and Book Two announcements for <em>The Listening Dark</em> series. Contact messages are used only to read and reply to you. We never sell, rent, or trade your information, and we don&rsquo;t send anything unrelated to the book.</p>"),
     ("How it&rsquo;s delivered and stored",
      f"<p>Form submissions are delivered to the author&rsquo;s inbox by <a href='https://formsubmit.co' rel='noopener'>FormSubmit</a>, a form-to-email service that processes your submission in order to deliver it. If we later move the list to a dedicated newsletter service (such as Kit or Beehiiv), your address will be stored there under that service&rsquo;s safeguards and every email will include an unsubscribe link.</p>"),
     ("Your choices",
@@ -549,12 +567,12 @@ PRIVACY = legal_body("Privacy Policy", "How we handle the little we collect.", [
     ("Age",
      "<p><em>The Listening Dark</em> is an adult novel (18+), and this site is intended for adult readers. We do not knowingly collect information from anyone under 18; if you believe a minor has joined the list, contact us and we&rsquo;ll remove the address.</p>"),
     ("Changes",
-     "<p>If this policy changes, the update will be posted on this page with a new date at the top. Significant changes will be mentioned in a waitlist email.</p>"),
+     "<p>If this policy changes, the update will be posted on this page with a new date at the top. Significant changes will be mentioned in an update email.</p>"),
 ])
 
 TERMS = legal_body("Terms of Service", "The agreement for using this site.", [
     ("Acceptance",
-     "<p>By using this website you agree to these terms. If you don&rsquo;t agree, please don&rsquo;t use the site. The site exists to share information about <em>The Listening Dark</em> and to let readers join the waitlist and contact the author.</p>"),
+     "<p>By using this website you agree to these terms. If you don&rsquo;t agree, please don&rsquo;t use the site. The site exists to share information about <em>The Listening Dark</em> and to let readers find the book, sign up for updates, and contact the author.</p>"),
     ("Intellectual property",
      "<p>Everything on this site &mdash; the text of <em>The Listening Dark</em>, the synopsis, the cover artwork, the title, character names, and the world of the book &mdash; is &copy; KP Cap, all rights reserved. You may browse and share links freely, and quote brief passages with credit for reviews and commentary. You may not republish extracts in full, use the artwork commercially, or train AI systems on the book&rsquo;s text, without written permission.</p>"),
     ("Content note",
@@ -562,7 +580,7 @@ TERMS = legal_body("Terms of Service", "The agreement for using this site.", [
     ("Acceptable use",
      "<p>Please don&rsquo;t misuse the site: no republishing site text wholesale, no submitting forms with someone else&rsquo;s email address, and no attempting to interfere with the site&rsquo;s operation.</p>"),
     ("Third-party links",
-     "<p>The site links to third-party platforms (Instagram, TikTok) and uses a third-party service to deliver form submissions. Those services have their own terms and policies, which we don&rsquo;t control.</p>"),
+     "<p>The site links to third-party platforms (Amazon, Instagram, TikTok) and uses a third-party service to deliver form submissions. Those services have their own terms and policies, which we don&rsquo;t control.</p>"),
     ("No warranties",
      "<p>The site is provided as-is. Release dates, formats, and other book details are subject to change &mdash; publishing is like that. We do our best to keep everything accurate, but we can&rsquo;t guarantee it.</p>"),
     ("Liability",
@@ -599,12 +617,26 @@ NOTFOUND = """  <section class="err">
 # =====================================================================
 #  BUILD
 # =====================================================================
+import json
+BOOK_LD = '<script type="application/ld+json">' + json.dumps({
+    "@context": "https://schema.org",
+    "@type": "Book",
+    "name": "The Listening Dark",
+    "author": {"@type": "Person", "name": "KP Capitulo"},
+    "genre": "Adult Fantasy Romance",
+    "bookFormat": "https://schema.org/EBook",
+    "datePublished": PUB_DATE_ISO,
+    "image": SITE + "/assets/cover.jpg",
+    "url": SITE + "/book.html",
+    "offers": {"@type": "Offer", "url": KINDLE_URL,
+               "availability": "https://schema.org/" + ("PreOrder" if PRE_ORDER else "InStock")},
+}) + "</script>\n"
 page("index.html", "The Listening Dark — an adult fantasy romance by KP Cap",
-     "Dragons choose their riders. Something older chose her. The Listening Dark, Book One of KP Cap's adult romantasy debut. Join the waitlist.",
-     "home", HOME, wl_target="#waitlist")
+     "Dragons choose their riders. Something older chose her. The Listening Dark, Book One of KP Cap's adult romantasy debut. Out on Kindle October 30, 2026.",
+     "home", HOME, wl_target="#waitlist", extra_head=BOOK_LD)
 page("book.html", "The Book — The Listening Dark",
      "The Listening Dark, Book One: an adult fantasy romance about a power that refuses classification, the academy that hunts it, and the dragon that has been waiting.",
-     "book", BOOK, wl_target="#waitlist")
+     "book", BOOK, wl_target="#waitlist", extra_head=BOOK_LD)
 page("author.html", "The Author — KP Cap",
      "KP Cap — military spouse, world-builder since sixth grade, debut romantasy author. The Listening Dark was written between 2017 and her baby's nap times.",
      "author", AUTHOR, wl_target="#waitlist")
@@ -627,5 +659,12 @@ page("accessibility.html", "Accessibility Statement — The Listening Dark",
      "Accessibility statement for The Listening Dark.", "", ACCESS, wl_target="index.html#waitlist")
 page("404.html", "Not Found — The Listening Dark",
      "The page you are listening for isn't here.", "", NOTFOUND, wl_target="index.html#waitlist")
+
+with open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8") as f:
+    f.write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n")
+with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
+    f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+            + "".join(f"  <url><loc>{u}</loc></url>\n" for u in PAGES) + "</urlset>\n")
+print("wrote robots.txt, sitemap.xml")
 
 print("\nDone. Built into:", ROOT)

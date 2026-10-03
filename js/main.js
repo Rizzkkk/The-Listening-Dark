@@ -236,7 +236,7 @@
         return;
       }
       deliver({
-        _subject: 'Waitlist signup — The Listening Dark',
+        _subject: 'Updates signup — The Listening Dark',
         _template: 'table',
         _captcha: 'false',
         email: v,

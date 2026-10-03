@@ -1,6 +1,6 @@
 # The Listening Dark — website
 
-A premium pre-launch site for **The Listening Dark** by **KP Cap** — an **adult
+The official site for **The Listening Dark** by **KP Cap** — an **adult
 fantasy romance (romantasy)**, Book One of a new series.
 Plain **HTML / CSS / JS** — no build tools, no framework, no dependencies to install.
 
