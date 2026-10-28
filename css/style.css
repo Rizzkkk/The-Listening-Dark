@@ -198,6 +198,7 @@ body.menu-open .brand, body.menu-open .nav-links{ opacity:0; pointer-events:none
 .nav-links a.btn-primary:hover, a.btn-primary:hover{ color:#201607; }
 .btn-ghost{ background:transparent; color:var(--bone-bright); border-color:var(--smoke); }
 .btn-ghost:hover{ border-color:var(--bone-bright); }
+.btn-soon, .btn-soon:hover{ opacity:.6; cursor:default; border-color:var(--smoke); }
 .btn-mini{ padding:.72em 1.4em; font-size:.85rem; }
 .btn-block{ width:100%; justify-content:center; }
 .link-txt{ font-family:var(--f-ui); font-size:.94rem; font-weight:600; letter-spacing:.01em; color:var(--ember); display:inline-flex; align-items:center; gap:.6em; position:relative; background:none; border:0; cursor:pointer; padding:0; }
@@ -433,9 +434,10 @@ body.menu-open .brand, body.menu-open .nav-links{ opacity:0; pointer-events:none
 .doc h2:first-of-type{ margin-top:0; }
 .doc p, .doc li{ font-family:var(--f-read); font-size:1.08rem; line-height:1.75; color:var(--bone); }
 .doc p{ margin:0 0 var(--s4); }
-.doc ul{ margin:0 0 var(--s4); padding-left:1.2em; }
+.doc ul, .doc ol{ margin:0 0 var(--s4); padding-left:1.2em; }
 .doc li{ margin-bottom:var(--s2); }
 .doc a{ color:var(--ember); text-decoration:underline; text-underline-offset:3px; }
+.doc a.link-txt{ text-decoration:none; }
 
 /* ---- 404 ---- */
 .err{ min-height:80vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:var(--s9) var(--s5); }
@@ -526,6 +528,24 @@ body.menu-open .brand, body.menu-open .nav-links{ opacity:0; pointer-events:none
 @media(max-width:719px){
   .spec.spec-ruled div:nth-child(2n+1){ border-left:0; padding-left:0; }
   .spec.spec-ruled div:nth-child(n+3){ border-top:1px solid var(--line); }
+}
+/* ---- Signed copy ---- */
+.signed-art{ width:min(480px,86vw); margin:0 auto; }
+.signed-art img{ width:100%; height:auto; border:1px solid var(--line); box-shadow:0 48px 96px rgba(0,0,0,.55); }
+.signed-note{ font-family:var(--f-ui); font-size:.82rem; line-height:1.5; color:var(--smoke); margin-top:var(--s4); max-width:40ch; }
+.signed-note a{ color:var(--ember); text-decoration:underline; text-underline-offset:3px; }
+/* the checkout form arrives in an ssi fragment from the shop service (payments-plan/12) */
+.signed-form{ display:flex; flex-wrap:wrap; align-items:center; gap:var(--s4); }
+.signed-qty-label{ font-family:var(--f-ui); font-size:.85rem; color:var(--smoke); }
+.signed-form select, .signed-form > input[type="text"]{ height:48px; padding:0 var(--s5); border:1px solid var(--smoke); border-radius:var(--r-pill); background:var(--night); color:var(--bone-bright); font-family:var(--f-ui); font-size:1rem; }
+/* direct child only, so the hidden honeypot field keeps its own styling */
+.signed-form > input[type="text"]{ width:11ch; text-transform:uppercase; letter-spacing:.06em; }
+.signed-form select:focus-visible, .signed-form > input[type="text"]:focus-visible{ border-color:var(--ember); }
+/* four cells, so it stays 2-up where the story strip goes 3-up */
+@media(min-width:720px){
+  .signed-grid .spec.spec-ruled{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .signed-grid .spec.spec-ruled div:nth-child(2n+1){ border-left:0; padding-left:0; }
+  .signed-grid .spec.spec-ruled div:nth-child(n+3){ border-top:1px solid var(--line); }
 }
 .advisory{ font-family:var(--f-ui); font-size:.82rem; color:var(--smoke); margin:0 0 var(--s6); }
 

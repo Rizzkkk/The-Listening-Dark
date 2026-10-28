@@ -8,3 +8,23 @@ assets/The.png
 # Local working notes, not part of the site
 DESIGN-PROMPT.md
 _probe.html
+
+# server details stay off the public repo
+DEPLOY.local.md
+
+# payments planning docs: money flow, fees and threat model stay off the public repo
+payments-plan/
+
+# secrets and order data never enter the public repo
+.env
+*.env
+.env.*
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*-wal
+*-shm
+orders/
+*.csv
+backups/

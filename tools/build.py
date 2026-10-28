@@ -12,10 +12,19 @@ Output is standard HTML/CSS/JS — no runtime dependency on this script.
 Synopsis, quotes and author bio are taken from the author's own
 back-cover copy and manuscript (this is the author's site).
 """
-import os, base64, datetime
+import os, sys, datetime
 
 SITE = "https://kpcapitulo.com"
 KINDLE_URL = "https://a.co/d/0e4UUKSl"
+
+# ---- Signed copies (plan: payments-plan/12; live values come from the store service) ----
+# her sign-off: off builds today's site exactly, on adds the ssi include points and the sale terms
+SHOP_ENABLED = True
+# fallbacks and alt text only; the service owns the live price and must match it
+PRICE_USD = "22.00"
+SIGNED_SHIPS = "within 14 days"
+RETENTION = "for as long as tax law requires us to keep business records"
+
 PUB_DATE = "October 30, 2026"
 PUB_DATE_ISO = "2026-10-30"
 # release day: set False, rebuild, deploy
@@ -23,12 +32,20 @@ PRE_ORDER = True
 BUY_LABEL = "Pre-order on Kindle" if PRE_ORDER else "Buy on Kindle"
 AVAIL = "available to pre-order now" if PRE_ORDER else "out now"
 
+PRICE = "$" + PRICE_USD.removesuffix(".00")
+# must match the fragment files the service writes (payments-plan/12)
+SSI_NAMES = ("ld-signed", "hero-cta", "signed-spec", "signed-cta", "book-formats", "faq-signed", "terms-price", "terms-refund")
+
+def ssi(name, fallback):
+    if name not in SSI_NAMES:
+        sys.exit(f"unknown ssi fragment: {name}")
+    if not SHOP_ENABLED:
+        return fallback
+    # without ssi (local preview) both directives are comments and the fallback shows once
+    return f'<!--# block name="{name}" -->{fallback}<!--# endblock --><!--# include virtual="/_shop/{name}.html" stub="{name}" -->'
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 YEAR = datetime.date.today().year
-
-# ---- Favicon: twin moons on the night ground ----
-FAVICON_SVG = """<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='#141119'/><circle cx='13' cy='14' r='8' stroke='#A78FE3' stroke-width='1.4' fill='none' opacity='.9'/><circle cx='21' cy='20' r='4.5' fill='#D2A85E' opacity='.95'/><circle cx='24.5' cy='7.5' r='1.1' fill='#E6E3F2'/></svg>"""
-FAVICON = "data:image/svg+xml;base64," + base64.b64encode(FAVICON_SVG.encode()).decode()
 
 # ---- The twin-moon mark (Twin Moon Rite) — nav / footer ----
 MARK = """<svg class="mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="13" cy="14" r="8.5" stroke="#A78FE3" stroke-width="1.3" opacity=".9"/><circle cx="21.5" cy="20" r="5" fill="#D2A85E" opacity=".95"/><circle cx="25" cy="7.5" r="1.1" fill="#E6E3F2"/></svg>"""
@@ -76,7 +93,9 @@ def head(title, desc, url=None, extra=""):
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="{SITE}/assets/og.png">
-{canon}{extra}<link rel="icon" href="{FAVICON}">
+{canon}{extra}<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/fraunces.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/inter.woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css">
@@ -88,6 +107,10 @@ def head(title, desc, url=None, extra=""):
 
 def kindle_btn(cls=""):
     return f'<a class="btn btn-primary{cls}" href="{KINDLE_URL}" target="_blank" rel="noopener">{BUY_LABEL}</a>'
+
+SPEC_FALLBACK = '<dl class="spec spec-ruled reveal">\n            <div><dt>Price</dt><dd>$22 USD</dd></div>\n            <div><dt>Signed by</dt><dd>KP Capitulo</dd></div>\n            <div><dt>Shipping</dt><dd>USPS, US and APO/FPO/DPO</dd></div>\n            <div><dt>Availability</dt><dd>Limited quantity</dd></div>\n          </dl>'
+# neutral on purpose: true before the first run and while she pauses sales
+PILL = '<span class="btn btn-ghost btn-soon">Signed author&rsquo;s copy &middot; check back soon</span>'
 
 def nav(active):
     def link(href, label, key):
@@ -201,9 +224,9 @@ def footer(wl_target):
 
 PAGES = []
 
-def page(filename, title, desc, active, body, wl_target="#waitlist", extra_head=""):
+def page(filename, title, desc, active, body, wl_target="#waitlist", extra_head="", listed=True):
     url = None
-    if filename != "404.html":
+    if listed:
         url = SITE + "/" + ("" if filename == "index.html" else filename)
         PAGES.append(url)
     html = head(title, desc, url, extra_head) + nav(active) + '<main class="content" id="main"><span id="top"></span>\n' + body + footer(wl_target)
@@ -234,7 +257,7 @@ HOME = f"""  <header class="hero">
       <p class="hero-sub" data-reveal>I don&rsquo;t aim it. I don&rsquo;t need to. <em>It listens.</em></p>
       <div class="hero-cta" data-reveal>
         {kindle_btn()}
-        <a class="btn btn-ghost" href="#waitlist">Get print &amp; Book Two news</a>
+        {ssi("hero-cta", PILL)}
       </div>
     </div>
     <div class="wrap hero-foot" data-reveal>
@@ -288,6 +311,22 @@ HOME = f"""  <header class="hero">
           <p>The Kindle edition is {AVAIL}.</p>
         </div>
         <a class="link-txt" href="{KINDLE_URL}" target="_blank" rel="noopener">{BUY_LABEL} <span class="arrow" aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-deep" id="signed">
+    <div class="wrap">
+      <div class="story-grid signed-grid">
+        <figure class="signed-art reveal">
+          <img src="assets/signed-copy.jpg" alt="Limited signed copy of The Listening Dark, 22 US dollars, personally signed by KP Capitulo, carefully packaged and shipped via USPS to US addresses only" width="900" height="1187" loading="lazy">
+        </figure>
+        <div class="prose-head">
+          <p class="kicker k-gold reveal">Limited signed copy</p>
+          <h2 class="reveal">A copy signed <em>by the author.</em></h2>
+          {ssi("signed-spec", SPEC_FALLBACK)}
+          <div class="signed-cta reveal">{ssi("signed-cta", PILL)}</div>
+        </div>
       </div>
     </div>
   </section>
@@ -378,7 +417,7 @@ BOOK = f"""  <header class="page-hero">
       <dl class="spec reveal" style="border-top:1px solid var(--line)">
         <div><dt>Genre</dt><dd>Adult Fantasy Romance</dd></div>
         <div><dt>Series</dt><dd>Book One</dd></div>
-        <div><dt>Formats</dt><dd>Kindle eBook</dd></div>
+        <div><dt>Formats</dt><dd>{ssi("book-formats", "Kindle eBook")}</dd></div>
         <div><dt>Publication</dt><dd>{PUB_DATE}</dd></div>
         <div><dt>Audience</dt><dd>Adult &middot; 18+</dd></div>
       </dl>
@@ -474,6 +513,8 @@ PRESS = f"""  <header class="page-hero">
 def faq_item(q, a):
     return f"""<div class="acc-item"><button class="acc-trigger" type="button"><span class="q">{q}</span><span class="ico" aria-hidden="true"></span></button><div class="acc-panel"><div class="acc-panel-inner">{a}</div></div></div>"""
 
+SIGNED_FAQ = ssi("faq-signed", faq_item("Will there be a paperback or hardcover?", "Yes &mdash; print editions are on their way. <a href='index.html#signed'>Signed copies</a> aren&rsquo;t on sale right now; <a href='#waitlist'>leave your email</a> and you&rsquo;ll hear when they are."))
+
 FAQ = f"""  <header class="page-hero">
     <div class="wrap">
       <div class="kicker center reveal">FAQ</div>
@@ -489,7 +530,7 @@ FAQ = f"""  <header class="page-hero">
         {faq_item("What is it about?", "An adult fantasy romance: a girl hidden her whole life from the academy that classifies magic, the power waking in her blood that fits no classification, and the dragons &mdash; and people &mdash; who choose her. A fuller synopsis lives on <a href='book.html'>The Book</a>.")}
         {faq_item("Is it a series?", "Yes &mdash; this is Book One. Some threads are deliberately left open; not everything is meant to close in the first book.")}
         {faq_item("Is it for me?", "It&rsquo;s adult fantasy &mdash; explicit content, violence, and language. Recommended 18+.")}
-        {faq_item("Will there be a paperback or hardcover?", "Yes &mdash; print editions are on their way. <a href='#waitlist'>Leave your email</a> and you&rsquo;ll hear the day they land.")}
+        {SIGNED_FAQ}
         {faq_item("Can I read a sample?", "Once the Kindle edition is out, the &ldquo;Read sample&rdquo; button on its <a href='" + KINDLE_URL + "' target='_blank' rel='noopener'>Amazon page</a> gives you the opening pages free.")}
         {faq_item("How do I get an advance or review copy?", "Reviewers, press, and book folk can reach out via <a href='contact.html'>Contact</a>.")}
       </div>
@@ -549,19 +590,32 @@ def legal_body(title, lede, sections):
 
 CONTACT_EMAIL = '<a href="mailto:author.kpcap@gmail.com">author.kpcap@gmail.com</a>'
 
+# signed-copy wording joins the legal pages only once she switches the shop on
+ORDER_LI = ("<li><strong>Signed-copy orders</strong> &mdash; your name, email address and shipping address, entered at checkout. Card details go to Stripe only; we never see or store them.</li>"
+            if SHOP_ENABLED else "")
+ORDERS_SECTION = [("Orders",
+     "<p>Signed copies are sold through <a href='https://stripe.com/privacy' rel='noopener'>Stripe</a>, which runs the checkout page and processes your payment. We use your order details only to sign, ship and support your order: to post it by USPS, to email you a receipt and tracking number, and to handle any refund. The author signs, packs and posts every copy herself, so your name and address are shared only with USPS and the military postal service that carries the parcel.</p>"
+     f"<p>Stripe keeps payment records under its own policy. We keep order records {RETENTION}, and we erase names and addresses from our order records six months after an order is delivered or closed. That covers the period in which a payment can still be disputed.</p>")] if SHOP_ENABLED else []
+
 PRIVACY = legal_body("Privacy Policy", "How we handle the little we collect.", [
     ("Who we are",
      f"<p>This website promotes <em>The Listening Dark</em>, a novel by KP Cap. It is run by the author. For anything in this policy, contact {CONTACT_EMAIL}.</p>"),
     ("What we collect",
-     "<p>We keep it minimal. There are no accounts, no payments, and no advertising on this site. The only personal information we collect is what you choose to send us:</p>"
-     "<ul><li><strong>Update signups</strong> &mdash; the email address you enter in a signup form.</li>"
-     "<li><strong>Contact messages</strong> &mdash; the name, email address, subject, and message you enter in the contact form.</li></ul>"),
+     ("<p>We keep it minimal. There are no accounts and no advertising on this site. The personal information we handle is what you choose to send us:</p>"
+      if SHOP_ENABLED else
+      "<p>We keep it minimal. There are no accounts, no payments, and no advertising on this site. The only personal information we collect is what you choose to send us:</p>")
+     + "<ul><li><strong>Update signups</strong> &mdash; the email address you enter in a signup form.</li>"
+     "<li><strong>Contact messages</strong> &mdash; the name, email address, subject, and message you enter in the contact form.</li>"
+     + ORDER_LI + "</ul>"),
     ("How we use it",
      "<p>Your signup email is used for one thing: book news &mdash; print edition and Book Two announcements for <em>The Listening Dark</em> series. Contact messages are used only to read and reply to you. We never sell, rent, or trade your information, and we don&rsquo;t send anything unrelated to the book.</p>"),
+    *ORDERS_SECTION,
     ("How it&rsquo;s delivered and stored",
-     f"<p>Form submissions are delivered to the author&rsquo;s inbox by <a href='https://formsubmit.co' rel='noopener'>FormSubmit</a>, a form-to-email service that processes your submission in order to deliver it. If we later move the list to a dedicated newsletter service (such as Kit or Beehiiv), your address will be stored there under that service&rsquo;s safeguards and every email will include an unsubscribe link.</p>"),
+     f"<p>Form submissions are delivered to the author&rsquo;s inbox by <a href='https://formsubmit.co' rel='noopener'>FormSubmit</a>, a form-to-email service that processes your submission in order to deliver it. If we later move the list to a dedicated newsletter service (such as Kit or Beehiiv), your address will be stored there under that service&rsquo;s safeguards and every email will include an unsubscribe link."
+     + (" Order emails, such as your tracking number, are sent through <a href='https://www.brevo.com/legal/privacypolicy/' rel='noopener'>Brevo</a>, an email delivery service." if SHOP_ENABLED else "") + "</p>"),
     ("Your choices",
-     f"<p>You can leave the list at any time &mdash; reply to any email we send, or write to {CONTACT_EMAIL}, and we&rsquo;ll remove you promptly. You can also ask what information we hold about you, ask us to correct it, or ask us to delete it entirely.</p>"),
+     f"<p>You can leave the list at any time &mdash; reply to any email we send, or write to {CONTACT_EMAIL}, and we&rsquo;ll remove you promptly. You can also ask what information we hold about you, ask us to correct it, or ask us to delete it entirely."
+     + (" For an order, we can correct your address until it ships; we can&rsquo;t delete records we&rsquo;re required to keep for tax." if SHOP_ENABLED else "") + "</p>"),
     ("Analytics &amp; cookies",
      "<p>This site sets no cookies and runs no advertising or cross-site tracking. See the <a href='cookies.html'>Cookie Policy</a> for the full picture.</p>"),
     ("Age",
@@ -572,19 +626,29 @@ PRIVACY = legal_body("Privacy Policy", "How we handle the little we collect.", [
 
 TERMS = legal_body("Terms of Service", "The agreement for using this site.", [
     ("Acceptance",
-     "<p>By using this website you agree to these terms. If you don&rsquo;t agree, please don&rsquo;t use the site. The site exists to share information about <em>The Listening Dark</em> and to let readers find the book, sign up for updates, and contact the author.</p>"),
+     "<p>By using this website you agree to these terms. If you don&rsquo;t agree, please don&rsquo;t use the site. The site exists to share information about <em>The Listening Dark</em> and to let readers find the book, "
+     + ("order a limited run of signed copies, " if SHOP_ENABLED else "") + "sign up for updates, and contact the author.</p>"),
     ("Intellectual property",
      "<p>Everything on this site &mdash; the text of <em>The Listening Dark</em>, the synopsis, the cover artwork, the title, character names, and the world of the book &mdash; is &copy; KP Cap, all rights reserved. You may browse and share links freely, and quote brief passages with credit for reviews and commentary. You may not republish extracts in full, use the artwork commercially, or train AI systems on the book&rsquo;s text, without written permission.</p>"),
     ("Content note",
      "<p>The book described on this site is adult fantasy containing explicit content, violence, and language. Site content referencing the book is intended for readers 18 and over.</p>"),
     ("Acceptable use",
      "<p>Please don&rsquo;t misuse the site: no republishing site text wholesale, no submitting forms with someone else&rsquo;s email address, and no attempting to interfere with the site&rsquo;s operation.</p>"),
+    *([("Signed copies",
+     ssi("terms-price", "<p><strong>Price and payment.</strong> Signed copies cost $22.00 USD per copy; shipping is shown on the order page and at checkout. Payment is in full at checkout through Stripe. Your order is accepted when payment completes and you receive a receipt.</p>")
+     + "<p><strong>Limited stock.</strong> The run is limited. If a copy sells twice by mistake, the later order is cancelled and refunded in full.</p>"
+     f"<p><strong>Shipping.</strong> US and APO/FPO/DPO addresses only, by USPS. Copies ship {SIGNED_SHIPS} of payment, from a US military post office overseas, so delivery usually takes one to three weeks more. You&rsquo;ll get the tracking number by email. If we can&rsquo;t ship on time, we&rsquo;ll email you a new date and the option to cancel for a full refund. Please check your address at checkout; a parcel returned for a wrong address can be re-sent once you cover the new postage.</p>"
+     + ssi("terms-refund", "<p><strong>Cancellations, returns and refunds.</strong> The refund policy for your order is the one shown at checkout and in your receipt. A copy that arrives damaged, or is lost in the mail, is always replaced or refunded.</p>"))] if SHOP_ENABLED else []),
     ("Third-party links",
-     "<p>The site links to third-party platforms (Amazon, Instagram, TikTok) and uses a third-party service to deliver form submissions. Those services have their own terms and policies, which we don&rsquo;t control.</p>"),
+     "<p>The site links to third-party platforms (Amazon, Instagram, TikTok)"
+     + (", uses Stripe for checkout and USPS for delivery," if SHOP_ENABLED else "")
+     + " and uses a third-party service to deliver form submissions. Those services have their own terms and policies, which we don&rsquo;t control.</p>"),
     ("No warranties",
      "<p>The site is provided as-is. Release dates, formats, and other book details are subject to change &mdash; publishing is like that. We do our best to keep everything accurate, but we can&rsquo;t guarantee it.</p>"),
     ("Liability",
-     "<p>To the fullest extent permitted by law, the author is not liable for any indirect or consequential loss arising from your use of this informational site.</p>"),
+     ("<p>To the fullest extent permitted by law, the author is not liable for any indirect or consequential loss arising from your use of this site. Nothing in these terms limits rights you have as a consumer under the law where you live.</p>"
+      if SHOP_ENABLED else
+      "<p>To the fullest extent permitted by law, the author is not liable for any indirect or consequential loss arising from your use of this informational site.</p>")),
     ("Changes",
      f"<p>These terms may be updated from time to time; the date at the top reflects the latest version. Questions: {CONTACT_EMAIL}.</p>"),
 ])
@@ -594,6 +658,8 @@ COOKIES = legal_body("Cookie Policy", "The crumbs we do and don&rsquo;t leave.",
      "<p><strong>This site sets no cookies.</strong> No advertising cookies, no analytics cookies, no tracking pixels, no third-party embeds that follow you around the internet.</p>"),
     ("What actually happens",
      "<p>The site is plain HTML, CSS, and JavaScript served as static files. Nothing is stored on your device beyond your browser&rsquo;s ordinary page cache. When you submit a form, your data is sent once, to deliver your message &mdash; nothing is left behind in your browser.</p>"),
+    *([("Checkout",
+     "<p>When you order a signed copy, you leave this site for Stripe&rsquo;s checkout page. Stripe sets its own cookies there, on its own domain, to process the payment and prevent fraud. They&rsquo;re covered by <a href='https://stripe.com/cookie-settings' rel='noopener'>Stripe&rsquo;s cookie policy</a>, not this one.</p>")] if SHOP_ENABLED else []),
     ("If that ever changes",
      "<p>If we ever add analytics, it will be a privacy-first, cookieless tool, and this page will be updated first with a new date at the top.</p>"),
     ("Managing cookies",
@@ -614,11 +680,65 @@ NOTFOUND = """  <section class="err">
   </section>
 """
 
+# ---------- THANK YOU (stripe success_url) ----------
+# anyone can open this url, so it never claims the payment went through; the stripe receipt does
+THANKS = f"""  <header class="page-hero">
+    <div class="wrap">
+      <div class="kicker center reveal">Signed copies</div>
+      <h1 class="reveal">Thank you.</h1>
+      <p class="lede reveal">If you&rsquo;ve just ordered a signed copy, your receipt from Stripe is on its way. That receipt is your confirmation.</p>
+    </div>
+  </header>
+
+  <section class="section-sm">
+    <div class="wrap">
+      <div class="doc reveal">
+        <h2>What happens next</h2>
+        <ol>
+          <li>KP Capitulo signs and packs your copy.</li>
+          <li>It ships by USPS {SIGNED_SHIPS}, from a US military post office overseas, so allow one to three weeks more for delivery.</li>
+          <li>You get a second email with the tracking number the day it goes out.</li>
+        </ol>
+        <h2>Wrong address?</h2>
+        <p>Write to {CONTACT_EMAIL} as soon as you can, with the name you used at checkout. We can fix it any time before your copy ships.</p>
+        <h2>No receipt?</h2>
+        <p>Give it a few minutes, then check your spam or promotions folder. Still nothing after an hour? Write to {CONTACT_EMAIL} with the name and email you used at checkout. Please don&rsquo;t order again to check; it would charge you twice.</p>
+        <p>Left checkout before paying? Then nothing was charged.</p>
+        <p><a class="link-txt" href="index.html">Back to the beginning <span class="arrow" aria-hidden="true">&rarr;</span></a></p>
+      </div>
+    </div>
+  </section>
+"""
+
+NOINDEX = """<meta name="robots" content="noindex">
+"""
+
+# ---------- CHECKOUT UNAVAILABLE (nginx sends failed or rate-limited checkouts here) ----------
+UNAVAILABLE = f"""  <header class="page-hero">
+    <div class="wrap">
+      <div class="kicker center reveal">Signed copies</div>
+      <h1 class="reveal">Checkout is resting.</h1>
+      <p class="lede reveal">Nothing was charged. The signed copies may have just sold out, or fewer are left than you chose. Check the <a href="index.html#signed">signed copy section</a> for what&rsquo;s available now, or try again in a few minutes.</p>
+    </div>
+  </header>
+
+  <section class="section-sm">
+    <div class="wrap">
+      <div class="doc reveal">
+        <p>If it keeps happening, write to {CONTACT_EMAIL} and we&rsquo;ll sort it out.</p>
+        <p><a class="link-txt" href="index.html#signed">Back to the signed copy <span class="arrow" aria-hidden="true">&rarr;</span></a></p>
+      </div>
+    </div>
+  </section>
+"""
+
 # =====================================================================
 #  BUILD
 # =====================================================================
 import json
-BOOK_LD = '<script type="application/ld+json">' + json.dumps({
+EBOOK_OFFER = {"@type": "Offer", "url": KINDLE_URL,
+               "availability": "https://schema.org/" + ("PreOrder" if PRE_ORDER else "InStock")}
+BOOK_DATA = {
     "@context": "https://schema.org",
     "@type": "Book",
     "name": "The Listening Dark",
@@ -628,9 +748,12 @@ BOOK_LD = '<script type="application/ld+json">' + json.dumps({
     "datePublished": PUB_DATE_ISO,
     "image": SITE + "/assets/cover.jpg",
     "url": SITE + "/book.html",
-    "offers": {"@type": "Offer", "url": KINDLE_URL,
-               "availability": "https://schema.org/" + ("PreOrder" if PRE_ORDER else "InStock")},
-}) + "</script>\n"
+    "offers": EBOOK_OFFER,
+}
+# json.dumps leaves "<" alone, so a stray "</script>" in any value would end the block
+# the signed edition rides on the same line with an empty stub, so the fallback page is today's page
+BOOK_LD = ('<script type="application/ld+json">' + json.dumps(BOOK_DATA).replace("<", "\\u003c") + "</script>"
+           + (ssi("ld-signed", "") if SHOP_ENABLED else "") + "\n")
 page("index.html", "The Listening Dark — an adult fantasy romance by KP Cap",
      "Dragons choose their riders. Something older chose her. The Listening Dark, Book One of KP Cap's adult romantasy debut. Out on Kindle October 30, 2026.",
      "home", HOME, wl_target="#waitlist", extra_head=BOOK_LD)
@@ -657,8 +780,18 @@ page("cookies.html", "Cookie Policy — The Listening Dark",
      "Cookie policy for The Listening Dark.", "", COOKIES, wl_target="index.html#waitlist")
 page("accessibility.html", "Accessibility Statement — The Listening Dark",
      "Accessibility statement for The Listening Dark.", "", ACCESS, wl_target="index.html#waitlist")
+SHOP_PAGES = {"thank-you.html": ("Thank you — The Listening Dark", "After checkout for a signed copy of The Listening Dark.", THANKS),
+              "checkout-unavailable.html": ("Checkout unavailable — The Listening Dark", "Checkout for signed copies is briefly unavailable.", UNAVAILABLE)}
+for fn, (title, desc, body) in SHOP_PAGES.items():
+    if SHOP_ENABLED:
+        page(fn, title, desc, "", body, wl_target="index.html#waitlist", extra_head=NOINDEX, listed=False)
+# a page left by an earlier build must go, and the disclosure page is gone for good (D8)
+for stale in ([] if SHOP_ENABLED else list(SHOP_PAGES)) + ["commerce-disclosure.html"]:
+    if os.path.exists(os.path.join(ROOT, stale)):
+        os.remove(os.path.join(ROOT, stale))
+        print("removed", stale, "- commit the deletion, or the deploy pull leaves it live")
 page("404.html", "Not Found — The Listening Dark",
-     "The page you are listening for isn't here.", "", NOTFOUND, wl_target="index.html#waitlist")
+     "The page you are listening for isn't here.", "", NOTFOUND, wl_target="index.html#waitlist", listed=False)
 
 with open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8") as f:
     f.write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n")

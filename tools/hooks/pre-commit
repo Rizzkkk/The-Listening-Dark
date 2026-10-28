@@ -1,0 +1,13 @@
+#!/bin/sh
+# the repo is public: block stripe secrets, order data and private docs
+pat='sk_live_|sk_test_|rk_live_|rk_test_|whsec_|-----BEGIN [A-Z ]*PRIVATE KEY'
+# the hook itself holds the patterns, so it is the one file left out of the scan
+if git diff --cached -U0 --diff-filter=ACMR -- . ':(exclude)tools/hooks/pre-commit' | grep -E '^\+' | grep -Eq "$pat"; then
+  echo "pre-commit: staged change contains a Stripe/secret key pattern. Commit blocked." >&2
+  exit 1
+fi
+# quotePath off, or a non-ascii path is printed in quotes and slips past the ^ anchors
+if git -c core.quotePath=false diff --cached --name-only --diff-filter=ACMR | grep -Eiq '(\.env(\..*)?$|\.db$|\.sqlite3?$|\.csv$|DEPLOY\.local\.md|^payments-plan/)'; then
+  echo "pre-commit: staged file looks like secrets, order data or private docs. Commit blocked." >&2
+  exit 1
+fi
