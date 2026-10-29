@@ -20,7 +20,9 @@ SHOP_CHANGES = ("privacy.html", "terms.html", "cookies.html") + SHOP_PAGES
 PLACEHOLDER_RE = re.compile(r"\{[A-Z_]+\}")
 
 NAMES = ("ld-signed", "hero-cta", "signed-spec", "signed-cta", "book-formats",
-         "faq-signed", "terms-price", "terms-refund")
+         "faq-signed", "terms-price", "terms-refund", "nav-signed")
+# the menu link sits in both the desktop nav and the mobile menu of every page
+EVERY_PAGE_TWICE = ("nav-signed",)
 EXPECTED = {"index.html": ("ld-signed", "hero-cta", "signed-spec", "signed-cta"),
             "book.html": ("ld-signed", "book-formats"),
             "faq.html": ("faq-signed",),
@@ -44,7 +46,7 @@ REFUNDABLE = ("Cancel any time before your copy ships for a full refund. Because
               "returns after shipping, except: if your copy arrives damaged, or is lost in the mail, we&rsquo;ll replace it "
               "or refund you in full. Tell us within 14 days of delivery (with a photo, if damaged). Refunds go back to the "
               "original payment method.")
-FORM_OPEN = '<form class="signed-form" method="post" action="/api/checkout">'
+FORM_OPEN = '<form class="order-card" method="post" action="/api/checkout"'
 FORMATS = {"open": "Kindle eBook &middot; Signed paperback (limited)",
            "soldout": "Kindle eBook &middot; Signed paperback (sold out)",
            "closed": "Kindle eBook"}
@@ -288,10 +290,10 @@ def s2_shop_on():
         for name in NAMES:
             inc = len(re.findall(r'<!--# include virtual="/_shop/%s\.html"' % re.escape(name), html))
             blk = html.count(f'<!--# block name="{name}" -->')
-            n = 1 if name in want else 0
+            n = 2 if name in EVERY_PAGE_TWICE else 1 if name in want else 0
             if inc != n or blk != n:
                 misplaced.append(f"{fn}: {name} include x{inc} block x{blk}, want x{n}")
-    check(sc, "each include and block appears exactly once on exactly its page(s)", not misplaced,
+    check(sc, "each include and block appears on exactly its page(s), once (the menu link twice)", not misplaced,
           "; ".join(misplaced[:5]))
     probs = [p for fn in html_files(out) for p in directive_problems(fn, read(out, fn))]
     check(sc, "directives match the grammar, contract names, stub-before-include, balanced, not in tags",
@@ -396,18 +398,23 @@ def s4_fixtures(on):
             check(sc, "open: exactly one checkout form", index.count(FORM_OPEN) == 1, f"{index.count(FORM_OPEN)} found")
             form = between(index, FORM_OPEN, "</form>")
             label = re.search(r'<button\b[^>]*type="submit"[^>]*>(.*?)</button>', form, re.S)
-            check(sc, "open: submit label contains $22", label and "$22" in label.group(1), "no $22 submit")
+            check(sc, "open: card shows $22 and a checkout button",
+                  '<p class="oc-price">$22 ' in form and label and "checkout" in label.group(1).lower(), "no price or button")
+            check(sc, "open: menu links to the card twice on every page",
+                  all(em[fn].count('<a href="index.html#signed">Signed copy</a>') == 2 for fn in em), "menu link missing")
             check(sc, "open: hero links to #signed", 'href="#signed"' in hero, "no href=#signed")
             spec = between(signed, '<dl class="spec spec-ruled reveal">', "</dl>")
             rows = len(re.findall(r"<div><dt>.*?</dt><dd>.*?</dd></div>", spec, re.S))
-            check(sc, "open: signed-spec has 4 rows", rows == 4, f"{rows} rows")
+            # while the card shows, price and copies left live in it, so the list keeps format and shipping only
+            check(sc, "open: signed-spec has 2 rows", rows == 2, f"{rows} rows")
             check(sc, "open: ld-signed parses, 22.00 InStock",
                   len(signed_lds) == 1 and offer.get("price") == "22.00"
                   and str(offer.get("availability", "")).endswith("InStock"), f"offer: {offer or 'missing'}")
             check(sc, "open: ld-signed JSON has no raw <", ld_raw and "<" not in ld_raw, "raw < or no script")
             check(sc, "open: terms shows the refundable policy", REFUNDABLE in em["terms.html"], "missing")
         elif state == "soldout":
-            check(sc, "soldout: no checkout form", "<form class=\"signed-form\"" not in index, "form present")
+            check(sc, "soldout: no checkout form", FORM_OPEN not in index, "form present")
+            check(sc, "soldout: no menu link", all("Signed copy</a>" not in em[fn] for fn in em), "menu link present")
             check(sc, "soldout: #signed says sold out", "sold out" in signed.lower(), "no 'sold out'")
             # the contract's soldout fragment is a comment that itself says "signed", so judge visible markup only
             visible = re.sub(r"<!--.*?-->", "", hero, flags=re.S)

@@ -1,7 +1,14 @@
-<form class="signed-form" method="post" action="/api/checkout">
+<form class="order-card" method="post" action="/api/checkout" data-unit="2200" data-ship="0">
 <div class="hp" aria-hidden="true"><label>Leave blank<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-<label class="signed-qty-label" for="signed-qty">Copies</label><select id="signed-qty" name="quantity"><option>1</option><option>2</option></select>
-<label class="signed-qty-label" for="signed-code">Discount code (optional)</label><input id="signed-code" name="code" type="text" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false">
-<button class="btn btn-ghost" type="submit">Order signed copies &middot; $22 each</button>
+<div class="oc-head"><p class="oc-kicker">Signed author&rsquo;s copy</p><p class="oc-stock">Limited run</p></div>
+<p class="oc-price">$22 <span>per copy</span></p>
+<fieldset class="oc-qty"><legend>Copies</legend><label><input type="radio" name="quantity" value="1" checked><span>1</span></label><label><input type="radio" name="quantity" value="2"><span>2</span></label></fieldset>
+<dl class="oc-sum">
+<div><dt>Book</dt><dd data-oc="book">$22.00</dd></div>
+<div><dt>US shipping, USPS tracked</dt><dd>Included</dd></div>
+<div class="oc-total"><dt data-oc="label">Total, 1 copy</dt><dd data-oc="total">$22.00</dd></div>
+</dl>
+<button class="btn btn-primary btn-block" type="submit">Continue to secure checkout</button>
+<p class="oc-trust">Secure checkout by Stripe &middot; USPS tracked &middot; Ships within 14 days</p>
+<p class="signed-note">You can add a name for the dedication on the next page. Ships by USPS within 14 days of payment from a US military post office overseas; allow 1 to 3 weeks more for delivery. Tracking by email. US and APO/FPO/DPO addresses only. Full refund any time before it ships.</p>
 </form>
-<p class="signed-note">Secure checkout by Stripe. Ships by USPS within 14 days of payment from a US military post office overseas; allow 1 to 3 weeks more for delivery. Tracking by email. US and APO/FPO/DPO addresses only. Full refund any time before it ships.</p>

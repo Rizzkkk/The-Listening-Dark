@@ -7,6 +7,24 @@ gitignored because this repo is public.
 
 ---
 
+## 2026-10-29
+
+How a buyer orders is now one clear path:
+
+- **Order card.** The `signed-cta` fragment (from the store service) is now a card:
+  - price and copies left;
+  - copies as radio pills;
+  - Book, shipping and Total lines;
+  - a tucked-away "Have a discount code?" box, shown only when shipping costs money;
+  - a gold "Continue to secure checkout" button and a trust line.
+
+  `js/main.js` keeps the total in step with the copies picked (display only; checkout recomputes every amount). It also disables the button after one tap, so a double tap can't open two Stripe pages. The styles are `.order-card` in `css/style.css`. The old `.signed-form` rules stay for one release.
+- **Spec list.** `signed-spec` drops Price and Availability while the card shows, since the card has both.
+- **Menu link.** "Signed copy" is in the desktop menu and the mobile menu through a ninth fragment, `nav-signed`. It shows only while the shop is open. Closed, sold out, or with the service down, every page is exactly what it was without the shop; `check_site` S3 still proves that byte for byte.
+- **Dedications.** Buyers can give an optional name to sign the copy to, on the Stripe page. The thank-you page mentions it, the terms say it's signed exactly as typed, and the privacy page lists it.
+- **Short link.** `kpcapitulo.com/signed` redirects to the card. That's an nginx rule in the store repo.
+- **Checks.** `check_site.py` 91/91. Fixtures regenerated for the new contract.
+
 ## 2026-10-28
 
 Signed copies switched on: `SHOP_ENABLED = True`. The site now ships `thank-you.html`

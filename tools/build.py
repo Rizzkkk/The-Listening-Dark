@@ -34,7 +34,7 @@ AVAIL = "available to pre-order now" if PRE_ORDER else "out now"
 
 PRICE = "$" + PRICE_USD.removesuffix(".00")
 # must match the fragment files the service writes (payments-plan/12)
-SSI_NAMES = ("ld-signed", "hero-cta", "signed-spec", "signed-cta", "book-formats", "faq-signed", "terms-price", "terms-refund")
+SSI_NAMES = ("ld-signed", "hero-cta", "signed-spec", "signed-cta", "book-formats", "faq-signed", "terms-price", "terms-refund", "nav-signed")
 
 def ssi(name, fallback):
     if name not in SSI_NAMES:
@@ -126,7 +126,7 @@ def nav(active):
   <div class="nav-in">
     <a class="brand" href="index.html" aria-label="The Listening Dark — home">{MARK}<span class="word">The Listening Dark</span></a>
     <div class="nav-links">
-      {links}
+      {ssi("nav-signed", "")}{links}
       {kindle_btn(" btn-mini")}
     </div>
     <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
@@ -135,6 +135,7 @@ def nav(active):
 <div class="menu" id="menu" aria-hidden="true">
   <nav class="menu-links" aria-label="Mobile">
     <a href="index.html">Home</a>
+    {ssi("nav-signed", "")}
     <a href="book.html">The Book</a>
     <a href="author.html">The Author</a>
     <a href="press.html">Press</a>
@@ -591,7 +592,7 @@ def legal_body(title, lede, sections):
 CONTACT_EMAIL = '<a href="mailto:author.kpcap@gmail.com">author.kpcap@gmail.com</a>'
 
 # signed-copy wording joins the legal pages only once she switches the shop on
-ORDER_LI = ("<li><strong>Signed-copy orders</strong> &mdash; your name, email address and shipping address, entered at checkout. Card details go to Stripe only; we never see or store them.</li>"
+ORDER_LI = ("<li><strong>Signed-copy orders</strong> &mdash; your name, email address and shipping address, and any name you give for the dedication, entered at checkout. Card details go to Stripe only; we never see or store them.</li>"
             if SHOP_ENABLED else "")
 ORDERS_SECTION = [("Orders",
      "<p>Signed copies are sold through <a href='https://stripe.com/privacy' rel='noopener'>Stripe</a>, which runs the checkout page and processes your payment. We use your order details only to sign, ship and support your order: to post it by USPS, to email you a receipt and tracking number, and to handle any refund. The author signs, packs and posts every copy herself, so your name and address are shared only with USPS and the military postal service that carries the parcel.</p>"
@@ -637,6 +638,7 @@ TERMS = legal_body("Terms of Service", "The agreement for using this site.", [
     *([("Signed copies",
      ssi("terms-price", "<p><strong>Price and payment.</strong> Signed copies cost $22.00 USD per copy; shipping is shown on the order page and at checkout. Payment is in full at checkout through Stripe. Your order is accepted when payment completes and you receive a receipt.</p>")
      + "<p><strong>Limited stock.</strong> The run is limited. If a copy sells twice by mistake, the later order is cancelled and refunded in full.</p>"
+     + "<p><strong>Dedications.</strong> At checkout you can give a name for the author to sign your copy to. It&rsquo;s signed exactly as you type it, so please check the spelling; once signed, a dedication can&rsquo;t be changed.</p>"
      f"<p><strong>Shipping.</strong> US and APO/FPO/DPO addresses only, by USPS. Copies ship {SIGNED_SHIPS} of payment, from a US military post office overseas, so delivery usually takes one to three weeks more. You&rsquo;ll get the tracking number by email. If we can&rsquo;t ship on time, we&rsquo;ll email you a new date and the option to cancel for a full refund. Please check your address at checkout; a parcel returned for a wrong address can be re-sent once you cover the new postage.</p>"
      + ssi("terms-refund", "<p><strong>Cancellations, returns and refunds.</strong> The refund policy for your order is the one shown at checkout and in your receipt. A copy that arrives damaged, or is lost in the mail, is always replaced or refunded.</p>"))] if SHOP_ENABLED else []),
     ("Third-party links",
@@ -699,6 +701,7 @@ THANKS = f"""  <header class="page-hero">
           <li>It ships by USPS {SIGNED_SHIPS}, from a US military post office overseas, so allow one to three weeks more for delivery.</li>
           <li>You get a second email with the tracking number the day it goes out.</li>
         </ol>
+        <p>If you added a name for the dedication, KP Capitulo signs your copy to it, exactly as you typed it.</p>
         <h2>Wrong address?</h2>
         <p>Write to {CONTACT_EMAIL} as soon as you can, with the name you used at checkout. We can fix it any time before your copy ships.</p>
         <h2>No receipt?</h2>

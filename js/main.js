@@ -278,6 +278,37 @@
     });
   }
 
+  /* ---- Signed-copy order card (arrives in an ssi fragment) ---- */
+  var card = document.querySelector('.order-card');
+  if (card) {
+    var unit = parseInt(card.getAttribute('data-unit'), 10);
+    var ship = parseInt(card.getAttribute('data-ship'), 10);
+    var money = function (c) { return '$' + Math.floor(c / 100) + '.' + ('0' + (c % 100)).slice(-2); };
+    var cell = function (k) { return card.querySelector('[data-oc="' + k + '"]'); };
+    // display only: /api/checkout recomputes every amount from the server's own settings
+    var sync = function () {
+      var picked = card.querySelector('input[name="quantity"]:checked') || card.querySelector('input[name="quantity"]');
+      var q = picked ? parseInt(picked.value, 10) : 1;
+      if (!(q >= 1) || isNaN(unit) || isNaN(ship)) return;
+      cell('book').textContent = money(unit * q);
+      cell('total').textContent = money(unit * q + ship);
+      cell('label').textContent = 'Total, ' + q + (q === 1 ? ' copy' : ' copies');
+    };
+    card.addEventListener('change', sync);
+    // a second tap would open a second stripe page for the same buyer
+    card.addEventListener('submit', function () {
+      var btn = card.querySelector('button[type="submit"]');
+      if (!btn) return;
+      setTimeout(function () { btn.disabled = true; btn.textContent = 'Opening secure checkout…'; }, 0);
+    });
+    // coming back with the browser's back button restores a disabled button from the page cache
+    window.addEventListener('pageshow', function () {
+      var btn = card.querySelector('button[type="submit"]');
+      if (btn && btn.disabled) { btn.disabled = false; btn.textContent = 'Continue to secure checkout'; }
+      sync();
+    });
+  }
+
   /* ---- Footer year ---- */
   var yr = document.querySelector('[data-year]');
   if (yr) yr.textContent = new Date().getFullYear();
