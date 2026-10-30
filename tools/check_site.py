@@ -47,9 +47,10 @@ REFUNDABLE = ("Cancel any time before your copy ships for a full refund. Because
               "or refund you in full. Tell us within 14 days of delivery (with a photo, if damaged). Refunds go back to the "
               "original payment method.")
 FORM_OPEN = '<form class="order-card" method="post" action="/api/checkout"'
-FORMATS = {"open": "Kindle eBook &middot; Signed paperback (limited)",
-           "soldout": "Kindle eBook &middot; Signed paperback (sold out)",
-           "closed": "Kindle eBook"}
+PB = "Kindle eBook &middot; <a href='https://a.co/d/07Q7zBZF' target='_blank' rel='noopener'>Paperback</a>"
+FORMATS = {"open": PB + " &middot; Signed paperback (limited)",
+           "soldout": PB + " &middot; Signed paperback (sold out)",
+           "closed": PB}
 CONFIRM_CLAIMS = ("payment is confirmed", "payment confirmed", "payment was successful", "payment received",
                   "order is confirmed", "order confirmed")
 
@@ -399,8 +400,11 @@ def s4_fixtures(on):
         check(sc, f"{state}: Get your copy keeps Kindle next to it", all('<p class="buy-kicker">Kindle eBook</p>' in em[fn] for fn in ("index.html", "book.html")), "no Kindle side")
         if state == "open":
             check(sc, "open: Get your copy links to the order card", all('href="index.html#signed">Order a signed copy</a>' in b for b in buys), "no order link")
+        elif state == "soldout":
+            check(sc, "soldout: Get your copy has no order link, only the waitlist", all("Order a signed copy" not in b and 'href="#waitlist"' in b for b in buys), "order link present")
         else:
-            check(sc, f"{state}: Get your copy has no order link, only the waitlist", all("Order a signed copy" not in b and 'href="#waitlist"' in b for b in buys), "order link present")
+            # closed just says "Opens soon." with no link, by request
+            check(sc, "closed: Get your copy has no links at all", all("<a " not in b for b in buys), "link present")
         if state == "open":
             check(sc, "open: exactly one checkout form", index.count(FORM_OPEN) == 1, f"{index.count(FORM_OPEN)} found")
             form = between(index, FORM_OPEN, "</form>")

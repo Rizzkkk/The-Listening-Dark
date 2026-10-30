@@ -587,7 +587,7 @@ body.menu-open .brand, body.menu-open .nav-links{ opacity:0; pointer-events:none
 @media(max-width:719px){ .order-card{ padding:var(--s5); } }
 .advisory{ font-family:var(--f-ui); font-size:.82rem; color:var(--smoke); margin:0 0 var(--s6); }
 
-/* ---- Get your copy: Kindle and the signed copy side by side ---- */
+/* ---- Get your copy: Kindle, paperback and the signed copy side by side ---- */
 .get-copy{ padding:var(--s6); border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface); }
 .get-copy > .kicker{ margin:0 0 var(--s5); }
 .buy-pair{ display:grid; gap:var(--s5); }
@@ -598,8 +598,11 @@ body.menu-open .brand, body.menu-open .nav-links{ opacity:0; pointer-events:none
 .buy-opt .link-txt{ min-height:44px; }
 @media(min-width:720px){
   .get-copy{ padding:var(--s6) var(--s7); }
-  .buy-pair{ grid-template-columns:1fr 1fr; gap:var(--s7); }
-  .buy-opt + .buy-opt{ padding-top:0; padding-left:var(--s7); border-top:0; border-left:1px solid var(--line); }
+}
+/* three columns get cramped below this */
+@media(min-width:960px){
+  .buy-pair{ grid-template-columns:repeat(3,1fr); gap:var(--s6); }
+  .buy-opt + .buy-opt{ padding-top:0; padding-left:var(--s6); border-top:0; border-left:1px solid var(--line); }
 }
 
 /* ---- Pull-quote (full bleed) ---- */

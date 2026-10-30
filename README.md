@@ -116,6 +116,7 @@ HTML, deploy.
 | Constant | What it does |
 |---|---|
 | `KINDLE_URL` | Every Kindle button |
+| `PAPERBACK_URL` | The Amazon paperback button, Formats row and FAQ link. The store service carries the same URL in `src/fragments.js` and the two must match |
 | `PUB_DATE`, `PUB_DATE_ISO` | Publication date shown on the site and in the JSON-LD |
 | `PRE_ORDER` | `True` says "Pre-order on Kindle"; set `False` on release day |
 | `SHOP_ENABLED` | The author's sign-off for the signed-copy shop. `False` (the default) builds the site with no signed-copy sales machinery. `True` adds the include points, the signed-copy sections of the terms, privacy and cookie pages, `thank-you.html` and `checkout-unavailable.html` |

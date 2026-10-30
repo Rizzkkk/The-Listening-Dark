@@ -9,6 +9,17 @@ gitignored because this repo is public.
 
 ## 2026-10-30
 
+Paperback on Amazon:
+
+- **Get your copy** now has three options: Kindle, the Amazon paperback
+  (`PAPERBACK_URL`) and the signed copy. Three columns from 960px up, stacked below.
+- The closed signed copy just says "Opens soon."; the "Tell me the day they go on
+  sale" link is gone (store `bookBuy()` and `BUY_FALLBACK` both).
+- Formats row, paperback FAQ answer and the waitlist copy now say the paperback is
+  out and the hardcover is on its way. Store fragments match; fixtures regenerated.
+- Signed-copy shipping is no longer included: set the fee in store admin, Settings,
+  "Shipping fee per order". The price text and Stripe charge follow it, no code change.
+
 Publication day. Ordering is now visible from more than one spot:
 
 - **Get your copy.** A new block puts Kindle and the signed copy side by side.

@@ -16,6 +16,7 @@ import os, sys, datetime
 
 SITE = "https://kpcapitulo.com"
 KINDLE_URL = "https://a.co/d/0e4UUKSl"
+PAPERBACK_URL = "https://a.co/d/07Q7zBZF"
 
 # ---- Signed copies (plan: payments-plan/12; live values come from the store service) ----
 # her sign-off: off builds today's site exactly, on adds the ssi include points and the sale terms
@@ -112,7 +113,7 @@ SPEC_FALLBACK = '<dl class="spec spec-ruled reveal">\n            <div><dt>Price
 # neutral on purpose: true before the first run and while she pauses sales
 PILL = '<span class="btn btn-ghost btn-soon">Signed author&rsquo;s copy &middot; check back soon</span>'
 # same markup the service writes while closed, so a down service reads like a closed shop
-BUY_FALLBACK = '<div class="buy-opt buy-signed"><p class="buy-kicker">Signed author&rsquo;s copy</p><p class="buy-line">Opens soon.</p><a class="link-txt" href="#waitlist">Tell me the day they go on sale <span class="arrow" aria-hidden="true">&rarr;</span></a></div>'
+BUY_FALLBACK = '<div class="buy-opt buy-signed"><p class="buy-kicker">Signed author&rsquo;s copy</p><p class="buy-line">Opens soon.</p></div>'
 
 def get_copy(cls):
     return f"""  <section class="{cls}" id="get">
@@ -121,6 +122,7 @@ def get_copy(cls):
         <p class="kicker k-gold">Get your copy</p>
         <div class="buy-pair">
           <div class="buy-opt"><p class="buy-kicker">Kindle eBook</p><p class="buy-line">The Kindle edition is {AVAIL}.</p>{kindle_btn()}</div>
+          <div class="buy-opt"><p class="buy-kicker">Paperback</p><p class="buy-line">The paperback is out now on Amazon.</p><a class="btn btn-ghost" href="{PAPERBACK_URL}" target="_blank" rel="noopener">Buy the paperback</a></div>
           {ssi("book-buy", BUY_FALLBACK)}
         </div>
       </div>
@@ -182,7 +184,7 @@ def waitlist_section():
     <div class="wrap">
       <p class="kicker k-gold center reveal">The Invitation</p>
       <h2 class="reveal">Hold it in <em>your hands.</em></h2>
-      <p class="lead reveal">The paperback and hardcover are on their way. Leave your email and we&rsquo;ll tell you the day they land, along with first word on Book Two.</p>
+      <p class="lead reveal">The hardcover is on its way. Leave your email and we&rsquo;ll tell you the day it lands, along with first word on Book Two.</p>
       <form class="wl-form reveal" data-waitlist novalidate>
         <div class="hp" aria-hidden="true"><label>Leave blank<input type="text" tabindex="-1" autocomplete="off"></label></div>
         <label class="wl-label" for="wl-email">Email address</label>
@@ -216,7 +218,7 @@ def footer(wl_target):
         </div>
         <div class="foot-col foot-mini">
           <h4>Print editions &amp; Book Two</h4>
-          <p>One email when the paperback lands. No noise.</p>
+          <p>One email when the hardcover lands. No noise.</p>
           <form data-waitlist novalidate>
             <div class="hp" aria-hidden="true"><label>Leave blank<input type="text" tabindex="-1" autocomplete="off"></label></div>
             <div class="field"><input id="ft-email" type="email" autocomplete="email" placeholder="you@email.com" aria-label="Email address" required><button class="btn btn-primary btn-mini" type="submit">Join</button></div>
@@ -424,7 +426,7 @@ BOOK = f"""  <header class="page-hero">
       <dl class="spec reveal" style="border-top:1px solid var(--line)">
         <div><dt>Genre</dt><dd>Adult Fantasy Romance</dd></div>
         <div><dt>Series</dt><dd>Book One</dd></div>
-        <div><dt>Formats</dt><dd>{ssi("book-formats", "Kindle eBook")}</dd></div>
+        <div><dt>Formats</dt><dd>{ssi("book-formats", "Kindle eBook &middot; <a href='" + PAPERBACK_URL + "' target='_blank' rel='noopener'>Paperback</a>")}</dd></div>
         <div><dt>Publication</dt><dd>{PUB_DATE}</dd></div>
         <div><dt>Audience</dt><dd>Adult &middot; 18+</dd></div>
       </dl>
@@ -520,7 +522,7 @@ PRESS = f"""  <header class="page-hero">
 def faq_item(q, a):
     return f"""<div class="acc-item"><button class="acc-trigger" type="button"><span class="q">{q}</span><span class="ico" aria-hidden="true"></span></button><div class="acc-panel"><div class="acc-panel-inner">{a}</div></div></div>"""
 
-SIGNED_FAQ = ssi("faq-signed", faq_item("Will there be a paperback or hardcover?", "Yes &mdash; print editions are on their way. <a href='index.html#signed'>Signed copies</a> aren&rsquo;t on sale right now; <a href='#waitlist'>leave your email</a> and you&rsquo;ll hear when they are."))
+SIGNED_FAQ = ssi("faq-signed", faq_item("Will there be a paperback or hardcover?", "Yes &mdash; the <a href='" + PAPERBACK_URL + "' target='_blank' rel='noopener'>paperback is out now on Amazon</a>, and a hardcover is on its way. <a href='index.html#signed'>Signed copies</a> aren&rsquo;t on sale right now; <a href='#waitlist'>leave your email</a> and you&rsquo;ll hear when they are."))
 
 FAQ = f"""  <header class="page-hero">
     <div class="wrap">
