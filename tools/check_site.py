@@ -20,11 +20,11 @@ SHOP_CHANGES = ("privacy.html", "terms.html", "cookies.html") + SHOP_PAGES
 PLACEHOLDER_RE = re.compile(r"\{[A-Z_]+\}")
 
 NAMES = ("ld-signed", "hero-cta", "signed-spec", "signed-cta", "book-formats",
-         "faq-signed", "terms-price", "terms-refund", "nav-signed")
+         "faq-signed", "terms-price", "terms-refund", "nav-signed", "book-buy")
 # the menu link sits in both the desktop nav and the mobile menu of every page
 EVERY_PAGE_TWICE = ("nav-signed",)
-EXPECTED = {"index.html": ("ld-signed", "hero-cta", "signed-spec", "signed-cta"),
-            "book.html": ("ld-signed", "book-formats"),
+EXPECTED = {"index.html": ("ld-signed", "hero-cta", "signed-spec", "signed-cta", "book-buy"),
+            "book.html": ("ld-signed", "book-formats", "book-buy"),
             "faq.html": ("faq-signed",),
             "terms.html": ("terms-price", "terms-refund")}
 STATES = ("open", "soldout", "closed")
@@ -394,6 +394,13 @@ def s4_fixtures(on):
         offer = (signed_lds[0] if signed_lds else {}).get("offers") or {}
         formats = between(em["book.html"], "<dt>Formats</dt><dd>", "</dd>")[len("<dt>Formats</dt><dd>"):].strip()
         check(sc, f"{state}: book Formats row reads {FORMATS[state]!r}", formats == FORMATS[state], f"row: {formats!r}")
+        buys = [between(em[fn], '<div class="buy-opt buy-signed">', "</div>") for fn in ("index.html", "book.html")]
+        check(sc, f"{state}: home and book both show the signed half of Get your copy", all(buys), "missing")
+        check(sc, f"{state}: Get your copy keeps Kindle next to it", all('<p class="buy-kicker">Kindle eBook</p>' in em[fn] for fn in ("index.html", "book.html")), "no Kindle side")
+        if state == "open":
+            check(sc, "open: Get your copy links to the order card", all('href="index.html#signed">Order a signed copy</a>' in b for b in buys), "no order link")
+        else:
+            check(sc, f"{state}: Get your copy has no order link, only the waitlist", all("Order a signed copy" not in b and 'href="#waitlist"' in b for b in buys), "order link present")
         if state == "open":
             check(sc, "open: exactly one checkout form", index.count(FORM_OPEN) == 1, f"{index.count(FORM_OPEN)} found")
             form = between(index, FORM_OPEN, "</form>")

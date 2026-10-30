@@ -7,6 +7,21 @@ gitignored because this repo is public.
 
 ---
 
+## 2026-10-30
+
+Publication day. Ordering is now visible from more than one spot:
+
+- **Get your copy.** A new block puts Kindle and the signed copy side by side.
+  - Where: on the home page (in place of the old "The Kindle edition is available" strip) and on The Book page after The Story. The Book page had no way to buy a signed copy before.
+  - What the signed half shows: it comes from a tenth fragment, `book-buy`.
+    - open: price, shipping and copies left, with an "Order a signed copy" button that goes to the order card;
+    - sold out: "Sold out" and a waitlist link;
+    - closed, or with the service down: "Opens soon" and a waitlist link.
+  - Styles are `.get-copy` and `.buy-*` in `css/style.css`; the unused `.soft-ask` rules are gone.
+- **Closed state.** The order area under `#signed` now says "Signed copies open soon. Leave your email..." under the pill, instead of only "check back soon".
+- **Kindle is out.** `PRE_ORDER = False`: every Kindle button says "Buy on Kindle", the structured data says `InStock`, and the FAQ sample answer no longer says "once it is out".
+- **Checks.** `check_site.py` is now 100/100. It checks that both pages show the block in every state, with an order link only while open. Fixtures regenerated.
+
 ## 2026-10-29
 
 How a buyer orders is now one clear path:

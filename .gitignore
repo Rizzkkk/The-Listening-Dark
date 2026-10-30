@@ -28,3 +28,6 @@ payments-plan/
 orders/
 *.csv
 backups/
+
+# flow and security ground truth names server controls, keep it off the public repo
+ground-truth/

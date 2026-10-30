@@ -28,13 +28,13 @@ RETENTION = "for as long as tax law requires us to keep business records"
 PUB_DATE = "October 30, 2026"
 PUB_DATE_ISO = "2026-10-30"
 # release day: set False, rebuild, deploy
-PRE_ORDER = True
+PRE_ORDER = False
 BUY_LABEL = "Pre-order on Kindle" if PRE_ORDER else "Buy on Kindle"
 AVAIL = "available to pre-order now" if PRE_ORDER else "out now"
 
 PRICE = "$" + PRICE_USD.removesuffix(".00")
 # must match the fragment files the service writes (payments-plan/12)
-SSI_NAMES = ("ld-signed", "hero-cta", "signed-spec", "signed-cta", "book-formats", "faq-signed", "terms-price", "terms-refund", "nav-signed")
+SSI_NAMES = ("ld-signed", "hero-cta", "signed-spec", "signed-cta", "book-formats", "faq-signed", "terms-price", "terms-refund", "nav-signed", "book-buy")
 
 def ssi(name, fallback):
     if name not in SSI_NAMES:
@@ -111,6 +111,22 @@ def kindle_btn(cls=""):
 SPEC_FALLBACK = '<dl class="spec spec-ruled reveal">\n            <div><dt>Price</dt><dd>$22 USD</dd></div>\n            <div><dt>Signed by</dt><dd>KP Capitulo</dd></div>\n            <div><dt>Shipping</dt><dd>USPS, US and APO/FPO/DPO</dd></div>\n            <div><dt>Availability</dt><dd>Limited quantity</dd></div>\n          </dl>'
 # neutral on purpose: true before the first run and while she pauses sales
 PILL = '<span class="btn btn-ghost btn-soon">Signed author&rsquo;s copy &middot; check back soon</span>'
+# same markup the service writes while closed, so a down service reads like a closed shop
+BUY_FALLBACK = '<div class="buy-opt buy-signed"><p class="buy-kicker">Signed author&rsquo;s copy</p><p class="buy-line">Opens soon.</p><a class="link-txt" href="#waitlist">Tell me the day they go on sale <span class="arrow" aria-hidden="true">&rarr;</span></a></div>'
+
+def get_copy(cls):
+    return f"""  <section class="{cls}" id="get">
+    <div class="wrap">
+      <div class="get-copy reveal">
+        <p class="kicker k-gold">Get your copy</p>
+        <div class="buy-pair">
+          <div class="buy-opt"><p class="buy-kicker">Kindle eBook</p><p class="buy-line">The Kindle edition is {AVAIL}.</p>{kindle_btn()}</div>
+          {ssi("book-buy", BUY_FALLBACK)}
+        </div>
+      </div>
+    </div>
+  </section>
+"""
 
 def nav(active):
     def link(href, label, key):
@@ -304,18 +320,7 @@ HOME = f"""  <header class="hero">
     </div>
   </section>
 
-  <section class="section-xs section-deep">
-    <div class="wrap">
-      <div class="soft-ask reveal">
-        <div class="sa-left">
-          <span class="sa-moons" aria-hidden="true"><i></i><i></i></span>
-          <p>The Kindle edition is {AVAIL}.</p>
-        </div>
-        <a class="link-txt" href="{KINDLE_URL}" target="_blank" rel="noopener">{BUY_LABEL} <span class="arrow" aria-hidden="true">&rarr;</span></a>
-      </div>
-    </div>
-  </section>
-
+{get_copy("section-xs section-deep")}
   <section class="section section-deep" id="signed">
     <div class="wrap">
       <div class="story-grid signed-grid">
@@ -393,6 +398,7 @@ BOOK = f"""  <header class="page-hero">
     </div>
   </section>
 
+{get_copy("section-xs")}
   <section class="section quote">
     <div class="wrap">
       {DIV_STAR}
@@ -532,7 +538,7 @@ FAQ = f"""  <header class="page-hero">
         {faq_item("Is it a series?", "Yes &mdash; this is Book One. Some threads are deliberately left open; not everything is meant to close in the first book.")}
         {faq_item("Is it for me?", "It&rsquo;s adult fantasy &mdash; explicit content, violence, and language. Recommended 18+.")}
         {SIGNED_FAQ}
-        {faq_item("Can I read a sample?", "Once the Kindle edition is out, the &ldquo;Read sample&rdquo; button on its <a href='" + KINDLE_URL + "' target='_blank' rel='noopener'>Amazon page</a> gives you the opening pages free.")}
+        {faq_item("Can I read a sample?", ("Once the Kindle edition is out, the" if PRE_ORDER else "The") + " &ldquo;Read sample&rdquo; button on its <a href='" + KINDLE_URL + "' target='_blank' rel='noopener'>Amazon page</a> gives you the opening pages free.")}
         {faq_item("How do I get an advance or review copy?", "Reviewers, press, and book folk can reach out via <a href='contact.html'>Contact</a>.")}
       </div>
     </div>
